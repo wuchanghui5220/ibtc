@@ -6,7 +6,6 @@ import requests
 import subprocess
 import time
 import re
-import os
 from fw_link_data import fw_link_data 
 
 print(""" 1: bf3
@@ -116,6 +115,12 @@ with sync_playwright() as p:
         texts.append(text)
         elements5.append((text, el))
     # 打印download 表格信息
+    folder = "html/" + model
+    ret = subprocess.run(['mkdir', '-p', folder])
+    if ret.returncode == 0:
+        print(f'{folder} folder created successfully!')
+    else:
+        print(f'Failed to create {folder} folder')
     info = model + "info.txt"
     with open(info, "w") as f:
         f.write("\n".join(texts))
@@ -137,4 +142,4 @@ with sync_playwright() as p:
     with open(f"html/{model}/index.html", 'w') as f:
         f.write(file_name_zip)
         f.write("\n")
-    os.remove(info)
+    ret = subprocess.run(['rm', info])
