@@ -6,7 +6,6 @@ import requests
 import subprocess
 import time
 import re
-import os
 
 with sync_playwright() as p:
     browser = p.chromium.launch()
@@ -131,11 +130,17 @@ with sync_playwright() as p:
     print(download_link_iso)
     print(download_link_tgz)
     browser.close()
-    
-    with open("html/ofed/index.html", 'w') as f:
+    sub_dir = 'html/ofed'
+    ret = subprocess.run(['mkdir','-p', sub_dir])
+    if ret.returncode == 0:
+        print(f'{sub_dir} created successfully!')
+    ret = subprocess.run(['pwd'], capture_output=True)
+    html_dir = ret.stdout.decode().strip() + '/' + sub_dir
+    with open(html_dir + "/index.html", 'w') as f:
         f.write(download_link_iso)
         f.write("\n")
-    os.remove("download_info.txt")
+    ret = subprocess.run(['rm','-rf', "download_info.txt"])
+    
 
 #    url = download_link_iso
 #    down_request = input("\n是否需要下载文件？（y/n）")
