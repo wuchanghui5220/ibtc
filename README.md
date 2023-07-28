@@ -49,3 +49,6 @@ An Infiniband Fabric Topology Calculator Python descript.
     
     输出下载链接：
     https://www.mellanox.com/downloads/firmware/fw-Quantum-rel-27_2010_6102-MQM8790-HS2X_Ax.bin.zip
+# requrement
+        sudo apt update
+    sudo apt install python3
