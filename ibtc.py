@@ -530,7 +530,13 @@ current_time = time.strftime("%Y%m%d-%H%M%S")
 filename = f'figure-{current_time}.png'
 plt.savefig(filename, dpi=300, bbox_inches='tight', transparent=True)
 # 获取html目录
-html_dir = "/home/admin/html/ib"
+sub_dir = 'html/ib'
+ret = subprocess.run(['mkdir','-p', sub_dir])
+if ret.returncode == 0:
+  print(f'{sub_dir} created successfully!')
+ret = subprocess.run(['pwd'], capture_output=True)
+html_dir = ret.stdout.decode().strip() + '/' + sub_dir
+# html_dir = "/home/admin/html/ib"
 
 # 构造mv命令
 cmd = ['mv', filename, html_dir]
