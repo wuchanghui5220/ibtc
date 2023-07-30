@@ -238,12 +238,9 @@ print("Other rest_other_switch_ports  is " + str(rest_other_switch_ports))
 print_dashes()
 
 # dac cable choice
-use_dac_cable = input("If use DAC cable? (y/n)").lower()
-dac_cable_number = 0
-if use_dac_cable == "y":
-    dac_cable_number = int(input("Enter DAC cable number: "))
-else:
-    print("DAC cable is 0.")
+dac_cable_number_input = input("Enter DAC cables: ")
+dac_cable_number = int(dac_cable_number_input) if dac_cable_number_input.isdigit() else 0
+print(dac_cable_number)
 print_dashes()
 
 # servers and nodes
@@ -414,34 +411,21 @@ node_color = ['blue' if 'Spine' in node else 'blue' if 'Leaf' in node else 'gree
 pos = nx.get_node_attributes(G, 'pos')
 # fig, ax = plt.subplots(figsize=(10, 5))
 fig = plt.figure(figsize=(10, 5))
+if spines > 20:
+    fig.set_size_inches(25, 5)
+elif spines > 15:
+    fig.set_size_inches(15, 5)
+elif spines > 10:
+    fig.set_size_inches(10, 5)
 # create a grid with 2 rows and 1 column, the first row is 70% and the second row is 30% of the height
 gs = gs.GridSpec(2, 1, height_ratios=[7, 3])
-ax1 = plt.subplot(gs[0]) # create a subplot in the first row
-
-ax2 = plt.subplot(gs[1]) # create a subplot in the second row
+ax1 = plt.subplot(gs[0, :]) # create a subplot in the first row
+ax2 = plt.subplot(gs[1, :]) # create a subplot in the second row
+gs.update(wspace=10, hspace=0.1)
 ax2.axis("off")
 nx.draw_networkx(G, pos, with_labels=False, ax=ax1, node_color=node_color, edge_color=edge_color_map)
 
-lx, ly, tx, ty = 0, 0, 0, 0 
-if server_num <=40:
-    tx, ty = 0.03, 0.85
-    tx_ = 0.11
-elif server_num <= 60:
-    tx, ty = 0.03, 0.85
-    tx_ = 0.07
-elif server_num <= 80:
-    tx, ty = 0.03, 0.85
-    tx_ = 0.08
-elif server_num <= 100:
-    tx, ty = 0.03, 0.85
-    tx_ = 0.09
-elif server_num <= 200:
-    tx, ty = 0.03, 0.85
-    tx_ = 0.09
-elif server_num <= 1000:
-    tx, ty = 0.03, 0.85
-    tx_ = 0.09
-
+tx, ty, tx_ = 0.036, 0.8, 0.1
 
 # if use dac cable, 
 leaf2spine_each_line = int(bisection/spines)
@@ -474,7 +458,10 @@ ax1.text(0.89, 0.9, "ZhengYang", fontsize=12, transform=ax1.transAxes)
 ax1.text(0.89, 0.85, "Technology", fontsize=9, transform=ax1.transAxes)
 ax2.text(tx, ty, "Spine & Leaf: " + " (" + switch_tpye + ")", fontsize=10, transform=ax2.transAxes)
 ax2.text(tx, ty - 0.14, str(spines) + "+" + str(leafs) + "=" + str(spines + leafs), fontsize=10, transform=ax2.transAxes)
-ax2.text(tx, ty - 0.28, "All cables: ", fontsize=10, transform=ax2.transAxes)
+if ports == NDR:
+    ax2.text(tx, ty - 0.28, "MPO-12/APC Cables: ", fontsize=10, transform=ax2.transAxes)
+else:
+    ax2.text(tx, ty - 0.28, "All cables: ", fontsize=10, transform=ax2.transAxes)
 if ports == NDR200:
     plt.text(tx, ty - 0.42, str(spine_to_leaf_cables) + "+" + str(leaf_to_server_cables) + "(1 to 2)" + "=" + str(all_cables), fontsize=10, transform=ax2.transAxes)
 else:
@@ -528,12 +515,12 @@ plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
 
 current_time = time.strftime("%Y%m%d-%H%M%S")
 filename = f'figure-{current_time}.png'
-plt.savefig(filename, dpi=300, bbox_inches='tight', transparent=True)
+plt.savefig(filename, dpi=200, bbox_inches='tight', transparent=True)
 # 获取html目录
 sub_dir = 'html/ib'
 ret = subprocess.run(['mkdir','-p', sub_dir])
-if ret.returncode == 0:
-  print(f'{sub_dir} created successfully!')
+#if ret.returncode == 0:
+#  print(f'{sub_dir} created successfully!')
 ret = subprocess.run(['pwd'], capture_output=True)
 html_dir = ret.stdout.decode().strip() + '/' + sub_dir
 # html_dir = "/home/admin/html/ib"
