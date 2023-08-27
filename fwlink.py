@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 from playwright.sync_api import sync_playwright
 from tqdm import tqdm
 from pathlib import Path
