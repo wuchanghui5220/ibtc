@@ -5,6 +5,7 @@ from tqdm import tqdm
 from pathlib import Path
 import requests
 import subprocess
+import os
 import time
 import re
 from fw_link_data import fw_link_data 
@@ -118,10 +119,11 @@ with sync_playwright() as p:
     # 打印download 表格信息
     folder = "html/" + model
     ret = subprocess.run(['mkdir', '-p', folder])
-    if ret.returncode == 0:
-        print(f'{folder} folder created successfully!')
-    else:
-        print(f'Failed to create {folder} folder')
+    # os.makedirs(folder, exist_ok=True)
+    # if ret.returncode == 0:
+    #     print(f'{folder} folder created successfully!')
+    # else:
+    #     print(f'Failed to create {folder} folder')
     info = model + "info.txt"
     with open(info, "w") as f:
         f.write("\n".join(texts))
@@ -144,3 +146,4 @@ with sync_playwright() as p:
         f.write(file_name_zip)
         f.write("\n")
     ret = subprocess.run(['rm', info])
+    # os.remove(info)
