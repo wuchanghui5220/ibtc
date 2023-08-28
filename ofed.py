@@ -5,6 +5,7 @@ from tqdm import tqdm
 from pathlib import Path
 import requests
 import subprocess
+import os
 import time
 import re
 
@@ -132,6 +133,7 @@ with sync_playwright() as p:
     print(download_link_tgz)
     browser.close()
     sub_dir = 'html/ofed'
+    # The follow code runs on Linux!
     ret = subprocess.run(['mkdir','-p', sub_dir])
     if ret.returncode == 0:
         print(f'{sub_dir} created successfully!')
@@ -141,6 +143,13 @@ with sync_playwright() as p:
         f.write(download_link_iso)
         f.write("\n")
     ret = subprocess.run(['rm','-rf', "download_info.txt"])
+    # The follow code runs on Windows!
+    # html_dir = os.getcwd() + "\\" + sub_dir 
+    # with open(html_dir + "\\index.html", 'w') as f:
+    #     f.write(download_link_iso)
+    #     f.write("\n")
+    # os.remove("download_info.txt")
+
     
 
 #    url = download_link_iso
