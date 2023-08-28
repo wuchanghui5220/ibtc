@@ -120,10 +120,7 @@ with sync_playwright() as p:
     folder = "html/" + model
     ret = subprocess.run(['mkdir', '-p', folder])
     # os.makedirs(folder, exist_ok=True)
-    # if ret.returncode == 0:
-    #     print(f'{folder} folder created successfully!')
-    # else:
-    #     print(f'Failed to create {folder} folder')
+
     info = model + "info.txt"
     with open(info, "w") as f:
         f.write("\n".join(texts))
