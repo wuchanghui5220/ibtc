@@ -132,8 +132,9 @@ with sync_playwright() as p:
     print(download_link_iso)
     print(download_link_tgz)
     browser.close()
-    sub_dir = 'html/ofed'
+
     # The follow code runs on Linux!
+    sub_dir = 'html/ofed'
     ret = subprocess.run(['mkdir','-p', sub_dir])
     if ret.returncode == 0:
         print(f'{sub_dir} created successfully!')
@@ -143,8 +144,10 @@ with sync_playwright() as p:
         f.write(download_link_iso)
         f.write("\n")
     ret = subprocess.run(['rm','-rf', "download_info.txt"])
-    
+
     # The follow code runs on Windows!
+    # sub_dir = 'html\\ofed'
+    # os.makedirs(sub_dir, exist_ok=True)
     # html_dir = os.getcwd() + "\\" + sub_dir 
     # with open(html_dir + "\\index.html", 'w') as f:
     #     f.write(download_link_iso)
