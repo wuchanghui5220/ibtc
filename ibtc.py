@@ -516,6 +516,10 @@ plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
 current_time = time.strftime("%Y%m%d-%H%M%S")
 filename = f'figure-{current_time}.png'
 plt.savefig(filename, dpi=200, bbox_inches='tight', transparent=True)
+# 要在屏幕显示图像，把下一行代码取消注释
+# plt.show()
+
+# 以下命令运行在Linux，如果要在windows系统运行，把以下代码全部注释！
 # 获取html目录
 sub_dir = 'html/ib'
 ret = subprocess.run(['mkdir','-p', sub_dir])
@@ -530,7 +534,7 @@ cmd = ['mv', filename, html_dir]
 
 # 调用mv命令移动文件
 subprocess.call(cmd)
-# plt.show()
+
 # 生成HTML代码
 html = f'<img src="{filename}" alt="ZhengYang Technology">'
 
