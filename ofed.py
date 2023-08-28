@@ -143,6 +143,7 @@ with sync_playwright() as p:
         f.write(download_link_iso)
         f.write("\n")
     ret = subprocess.run(['rm','-rf', "download_info.txt"])
+    
     # The follow code runs on Windows!
     # html_dir = os.getcwd() + "\\" + sub_dir 
     # with open(html_dir + "\\index.html", 'w') as f:
