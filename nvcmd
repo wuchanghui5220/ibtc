@@ -1,3 +1,6 @@
+# single line command
+# for dev in $(sudo lspci | grep Mellanox | cut -d" " -f1);  do echo -e "
+
 # write follow code to ~/.bashrc and  source ~/.bashrc
 lsps() { 
   for dev in $(sudo lspci | grep Mellanox | cut -d" " -f1)
