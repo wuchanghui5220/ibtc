@@ -1,12 +1,31 @@
 import pandas as pd
 import openpyxl
 import sys
+import glob
 
-excel_file = sys.argv[1]
 
-file1 = excel_file
-file2 = 'Q224 REV 1 Distribution Networking SWS X-ref Report.xlsx'
-file3 = 'Q224 REV 1 Distribution Networking SWS Price Book.xlsx'
+files = {
+    # 'HW': [],
+    'SWS X': [],
+    'SWS P': [] 
+}
+
+# hw_files = glob.glob('*HW*.xlsx')
+# for f in hw_files:
+#     files['HW'].append(f)
+
+sws_x_files = glob.glob('*SWS X*.xlsx')  
+for f in sws_x_files:
+    files['SWS X'].append(f)
+    
+sws_p_files = glob.glob('*SWS P*.xlsx')
+for f in sws_p_files:
+    files['SWS P'].append(f)
+    
+print(files)
+file1 = sys.argv[1]
+file2 = files['SWS X'][0]
+file3 = files['SWS P'][0]
 
 # 读取第一张表格  
 hw_df = pd.read_excel(file1, header=None)
