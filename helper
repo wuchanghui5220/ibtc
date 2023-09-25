@@ -38,6 +38,7 @@ sudo apt install python3-pip
 sudo apt install nodejs npm
 sudo npm install -g playwright
 playwright install
+sudo playwright install-deps
 
 pip install --user networkx matplotlib --break-system-packages
 
