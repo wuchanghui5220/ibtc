@@ -1,0 +1,18 @@
+# install Docker
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  bash get-docker.sh
+
+# IPsec VPN
+  docker run \
+    --name ipsec-vpn-server \
+    --restart=always \
+    -v ikev2-vpn-data:/etc/ipsec.d \
+    -v /lib/modules:/lib/modules:ro \
+    -p 500:500/udp \
+    -p 4500:4500/udp \
+    -d --privileged \
+    hwdsl2/ipsec-vpn-server
+
+root@test:~# docker exec -it ipsec-vpn-server ls -l /etc/ipsec.d
+
+root@test:~# docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.p12 ./
