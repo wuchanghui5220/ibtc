@@ -34,6 +34,11 @@ docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan ./
 sudo apt update
 sudo apt install python3-pip
 
+
+sudo apt install nodejs npm
+sudo npm install -g playwright
+playwright install
+
 pip install --user networkx matplotlib --break-system-packages
 
 pip install playwright tqdm --break-system-packages
