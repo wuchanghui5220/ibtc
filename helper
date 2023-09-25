@@ -13,6 +13,28 @@
     -d --privileged \
     hwdsl2/ipsec-vpn-server
 
-root@test:~# docker exec -it ipsec-vpn-server ls -l /etc/ipsec.d
 
-root@test:~# docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.p12 ./
+docker exec -it ipsec-vpn-server ls -l /etc/ipsec.d
+
+
+docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig ./
+docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan ./
+
+
+# install Nginx container
+  docker pull nginx
+  mkdir -p /home/admin/html
+  docker run -d \
+  --name nginx \
+  -p 80:80 \
+  -v /home/admin/html:/usr/share/nginx/html \
+  nginx
+
+# install python python-pip
+sudo apt update
+sudo apt install python3-pip
+
+pip install --user networkx matplotlib --break-system-packages
+
+pip install playwright tqdm --break-system-packages
+
