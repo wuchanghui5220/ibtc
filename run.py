@@ -47,7 +47,7 @@ while True:
     
     choice = input('是否需要再次生成新的报价?默认Y继续, (Y/N)')
     
-    if choice.upper() == 'n':
+    if choice.upper() == 'N':
         break
         
 os.system('pause')
