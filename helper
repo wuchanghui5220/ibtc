@@ -44,3 +44,39 @@ pip install --user networkx matplotlib --break-system-packages
 
 pip install playwright tqdm --break-system-packages
 
+####################################################
+# install git
+apt update
+apt install -y git
+
+#install docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+bash get-docker.sh
+
+# pull and run ipsec-vpn-server
+docker run --name ipsec-vpn-server --restart=always -v ikev2-vpn-data:/etc/ipsec.d -v /lib/modules:/lib/modules:ro -p 500:500/udp -p 4500:4500/udp -d --privileged hwdsl2/ipsec-vpn-server
+docker exec -it ipsec-vpn-server ls -l /etc/ipsec.d
+docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig ./
+docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan ./
+
+# cp vpnclient.* to /home/admin
+chown admin:admin vpnclient.*
+cp vpnclient.* /home/admin/
+
+# install python3 and pip playwright
+apt update
+apt install -y python3-pip
+apt install -y nodejs npm
+npm install -g playwright
+pip install --break-system-packages playwright tqdm
+playwright install
+
+# pull and run nginx
+docker pull nginx
+mkdir -p /home/admin/html
+chown -R admin:admin /home/admin/html
+docker run -d   --name nginx   -p 80:80   -v /home/admin/html:/usr/share/nginx/html   nginx
+
+# install networkx matplotlib
+pip install --user networkx matplotlib --break-system-packages
+
