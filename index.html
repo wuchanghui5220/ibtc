@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Welcome to My album</title>
+    <style>
+        body {
+/*            background-color: lightblue;
+            font-family: Arial, sans-serif;*/
+            background-image: url("https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg"); /* 指定图片的路径 */
+            background-repeat: no-repeat; /* 不重复图片 */
+            background-size: cover; /* 使图片覆盖整个页面 */
+            background-attachment: fixed; /* 使图片固定不随滚动条移动 */
+        }
+        h1 {
+            text-align: center;
+            color: white;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .photo {
+            width: 300px;
+            height: 200px;
+            margin: 10px;
+            border: 5px solid white;
+            box-shadow: 0 0 10px black;
+        }
+    </style>
+</head>
+<body background="https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg"> <!-- 指定图片的路径 -->
+    <h1></h1>
+    <br>
+    <h1>Welcome to My album</h1>
+    <div class="gallery">
+        <img src="https://images.pexels.com/photos/1682497/pexels-photo-1682497.jpeg" alt="Family" class="photo">
+        <img src="https://images.pexels.com/photos/4931332/pexels-photo-4931332.jpeg" alt="Friends" class="photo">
+        <img src="https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg" alt="Pets" class="photo">
+        <img src="https://images.pexels.com/photos/18523343/pexels-photo-18523343.jpeg" alt="Travel" class="photo">
+        <img src="https://images.pexels.com/photos/18431776/pexels-photo-18431776.jpeg" alt="Learning" class="photo">
+        <img src="https://images.pexels.com/photos/7034697/pexels-photo-7034697.jpeg" alt="Interesting" class="photo">
+    </div>
+</body>
+</html>
