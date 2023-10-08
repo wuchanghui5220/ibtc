@@ -18,8 +18,8 @@ main {
         .bg1 {
               background-image: linear-gradient(
                 45deg, 
-                rgba(255, 0, 0, 0.6), 
-                rgba(255, 165, 0, 0.6), 
+/*                rgba(255, 0, 0, 0.6), 
+                rgba(255, 165, 0, 0.6), */
                 rgba(255, 255, 0, 0.6), 
                 rgba(0, 128, 0, 0.6),
                 rgba(0, 0, 255, 0.6), 
@@ -37,13 +37,37 @@ main {
             justify-content: center;
             margin: 20px;
         }
-        .photo {
+/*        .photo {
             width: 300px;
             height: 200px;
             margin: 10px;
             border: 5px solid white;
             box-shadow: 0 0 10px black;
-        }
+        }*/
+        .photo {
+            width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+          }
+        .item {
+            padding: 0 10px;
+            margin-bottom: 20px; 
+            font-size: 12px;
+          }
+          .item p {
+            color: #fff;
+          }
+          .latest-posts {
+/*            max-width: 960px; */
+            margin: 0 auto;
+            padding: 0 100px;
+          }
+          .latest-posts h2, 
+          .latest-posts h3,
+          .latest-posts p {
+            color: #fff; /* 字体色 */
+          }
 
           /* 头部 */  
           header {
@@ -119,17 +143,49 @@ main {
   
   <main>
     <div class="gallery">
+      <div class="item">
         <img src="https://images.pexels.com/photos/1682497/pexels-photo-1682497.jpeg" alt="Family" class="photo">
+        <p>Here is a photo of my family at the park</p>
+      </div>
+      <div class="item">
         <img src="https://images.pexels.com/photos/4931332/pexels-photo-4931332.jpeg" alt="Friends" class="photo">
+        <p>Here is a photo with my best friends at the cafe</p>
+        </div>
+      <div class="item">
         <img src="https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg" alt="Pets" class="photo">
+        <p>Here is a photo of my cute puppy playing in the yard</p>
+        </div>
+      <div class="item">
         <img src="https://images.pexels.com/photos/18523343/pexels-photo-18523343.jpeg" alt="Travel" class="photo">
+        <p>Here is a photo from my trip to the Grand Canyon last year</p>
+        </div>
+      <div class="item">
         <img src="https://images.pexels.com/photos/18431776/pexels-photo-18431776.jpeg" alt="Learning" class="photo">
+        <p>Here is me studying in the library for my big exam</p>
+        </div>
+      <div class="item">
         <img src="https://images.pexels.com/photos/7034697/pexels-photo-7034697.jpeg" alt="Interesting" class="photo">
+        <p>Here is something interesting I saw on my walk yesterday</p>
+        </div>
+      
     </div>
+      <section class="latest-posts">
+    <h2>Latest Posts</h2>
+    
+    <article>
+      <h3>My Trip to Hawaii</h3>
+      <p>Here are some highlights from my recent trip to Hawaii...</p>
+    </article>
+
+    <article>
+      <h3>Jane's Birthday Party</h3>
+      <p>We had so much fun celebrating Jane's birthday last weekend...</p> 
+    </article>
+</section>
   </main>
 
   <footer>
-    <p>&copy; 2023 NVLINK.VIP All rights reserved.</p> 
+    <p>&copy; 2023 My Name. All rights reserved.</p> 
   </footer>
 
 </body>
