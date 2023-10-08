@@ -54,35 +54,35 @@ ratio_text = ""
 if RA == 2 and ports == EDR:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:1"
-    switch_tpye = "SB7800"
+    switch_tpye = "SB7890"
 elif RA == 2 and ports == HDR:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:1"
-    switch_tpye = "QM8700"
+    switch_tpye = "QM8790"
 elif RA == 2 and ports == NDR200:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:1"
-    switch_tpye = "QM9700"
+    switch_tpye = "QM9790"
 elif RA == 2 and ports == NDR:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:1"
-    switch_tpye = "QM9700"
+    switch_tpye = "QM9790"
 elif RA == 3 and ports == EDR:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:2"
-    switch_tpye = "SB7800"
+    switch_tpye = "SB7890"
 elif RA == 3 and ports == HDR:
     bisection = 16
     ratio_text = "3:5"
-    switch_tpye = "QM8700"
+    switch_tpye = "QM8790"
 elif RA == 3 and ports == NDR:
     bisection = 20
     ratio_text = "1:2"
-    switch_tpye = "QM9700"
+    switch_tpye = "QM9790"
 else:
     bisection = 18
     ratio_text = "1:1"
-    switch_tpye = "SB7800"
+    switch_tpye = "SB7890"
     
 print("Fabric speed is " + speed)
 
