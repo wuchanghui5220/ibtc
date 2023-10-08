@@ -1,15 +1,32 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to My album</title>
-    <style>
-        body {
-/*            background-color: lightblue;
-            font-family: Arial, sans-serif;*/
-            background-image: url("https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg"); /* 指定图片的路径 */
-            background-repeat: no-repeat; /* 不重复图片 */
-            background-size: cover; /* 使图片覆盖整个页面 */
-            background-attachment: fixed; /* 使图片固定不随滚动条移动 */
-        }
+  <title>My Photo Album</title>
+      <style>
+            /* 整体样式 */
+          body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  min-height: 80vh; 
+  padding: 20px;
+}
+        .bg1 {
+              background-image: linear-gradient(
+                45deg, 
+                rgba(255, 0, 0, 0.6), 
+                rgba(255, 165, 0, 0.6), 
+                rgba(255, 255, 0, 0.6), 
+                rgba(0, 128, 0, 0.6),
+                rgba(0, 0, 255, 0.6), 
+                rgba(75, 0, 130, 0.6), 
+                rgba(238, 130, 238, 0.6)
+              );
+            }
         h1 {
             text-align: center;
             color: white;
@@ -27,12 +44,80 @@
             border: 5px solid white;
             box-shadow: 0 0 10px black;
         }
+
+          /* 头部 */  
+          header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px; 
+          }
+
+          h1 {
+            margin: 0;
+          }
+
+          /* 导航 */
+          nav {
+            display: flex;
+            justify-content: center;
+          }
+
+          nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex; 
+          }
+
+          nav li {
+            margin: auto;
+          }
+
+          nav a {
+            color: #fff;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+          }
+
+          /* 页脚 */
+          footer {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+          /* 内容 */
+          main {
+            padding: 20px;
+          }
+
+          img {
+            max-width: 100%;
+            height: auto;
+          }
     </style>
 </head>
-<body background="https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg"> <!-- 指定图片的路径 -->
-    <h1></h1>
-    <br>
-    <h1>Welcome to My album</h1>
+
+<body class="bg1">
+
+  <header>
+    <h1>Welcome to My Photo Album!</h1>
+    
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>  
+        <li><a href="#">Gallery</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <body class="bg6"> <!-- 指定图片的路径 -->
+  
+  <main>
     <div class="gallery">
         <img src="https://images.pexels.com/photos/1682497/pexels-photo-1682497.jpeg" alt="Family" class="photo">
         <img src="https://images.pexels.com/photos/4931332/pexels-photo-4931332.jpeg" alt="Friends" class="photo">
@@ -41,5 +126,11 @@
         <img src="https://images.pexels.com/photos/18431776/pexels-photo-18431776.jpeg" alt="Learning" class="photo">
         <img src="https://images.pexels.com/photos/7034697/pexels-photo-7034697.jpeg" alt="Interesting" class="photo">
     </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 My Name. All rights reserved.</p> 
+  </footer>
+
 </body>
 </html>
