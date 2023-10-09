@@ -44,7 +44,7 @@ pip install --user networkx matplotlib --break-system-packages
 
 pip install playwright tqdm --break-system-packages
 
-####################################################
+###################################################################################
 # install git
 apt update
 apt install -y git
@@ -63,20 +63,22 @@ docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan ./
 chown admin:admin vpnclient.*
 cp vpnclient.* /home/admin/
 
-# install python3 and pip playwright
-apt update
-apt install -y python3-pip
-apt install -y nodejs npm
-npm install -g playwright
-pip install --break-system-packages playwright tqdm
-playwright install
-
 # pull and run nginx
 docker pull nginx
 mkdir -p /home/admin/html
 chown -R admin:admin /home/admin/html
-docker run -d   --name nginx   -p 80:80   -v /home/admin/html:/usr/share/nginx/html   nginx
+docker run -d --name nginx -p 80:80 -v /home/admin/html:/usr/share/nginx/html nginx
+
+###################################################################################
+# install python3 and pip playwright
+apt update
+apt install -y python3-pip nodejs npm
+npm install -g playwright
+pip install --break-system-packages playwright tqdm
 
 # install networkx matplotlib
 pip install --user networkx matplotlib --break-system-packages
 
+# Use admin to install following packages if you want to run the Script for user admin 
+playwright install
+sudo playwright install-deps
