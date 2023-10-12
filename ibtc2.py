@@ -524,7 +524,7 @@ plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
 
 current_time = time.strftime("%Y%m%d-%H%M%S")
 filename = f'figure-{current_time}.png'
-plt.savefig(filename, dpi=200, bbox_inches='tight', transparent=True)
+plt.savefig(filename, dpi=300, bbox_inches='tight', transparent=True)
 # 要在屏幕显示图像，把下一行代码取消注释
 # plt.show()
 
