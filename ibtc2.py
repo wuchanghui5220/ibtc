@@ -457,7 +457,7 @@ print("HCA optical transceiver: " + str(Hca_OT))
 # ax2.legend(handles=legend_labels, loc='upper right', bbox_to_anchor=(1, 1)) # add legend to ax2
 font = {'fontsize': 14, 'fontweight': 'bold'}
 # 使用ax1.set_title方法来设置标题
-ax1.set_title('Infiniband Topology Calculator v0.9.3', fontdict=font) # set the title for ax1
+ax1.set_title('Infiniband Topology Calculator v0.10.2', fontdict=font) # set the title for ax1
 # Add information about the fabric to the canvas
 #ax1.text(0.89, 0.9, "ZhengYang", fontsize=12, transform=ax1.transAxes)
 #ax1.text(0.89, 0.85, "Technology", fontsize=9, transform=ax1.transAxes)
