@@ -82,3 +82,5 @@ pip install --user networkx matplotlib --break-system-packages
 # Use admin to install following packages if you want to run the Script for user admin 
 playwright install
 sudo playwright install-deps
+
+cp favicon.ico index.html ../html ; cp fw_link_data.py fwlink.py ibtc.py ibtc2.py ofed.py logonvidia.png logozy.jpg ../
