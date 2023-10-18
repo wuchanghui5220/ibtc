@@ -18,7 +18,7 @@ def print_dashes(num=90):
 def transform(x,n):
   return n * math.ceil(x/n)
 
-logo = mpimg.imread('logozy.jpg')
+logo = mpimg.imread('zy_elite.png')
 # logo = mpimg.imread('logonvidia.png')
 print_dashes()    
 EDR = 36
