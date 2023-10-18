@@ -21,7 +21,7 @@ fi
 
 
 user="admin"
-user_home="/home/admin"
+user_home="/home/$user"
 html_dir="$user_home/html"
 
 # check html directory
