@@ -20,13 +20,16 @@ echo "Copy vpnclient.mobileconfig "
 docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig ./
 echo "Copy vpnclient.sswan "
 docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan ./
-
+echo ""
 echo "Copy files to /home/admin/"
 echo "# cp ./vpnclient.* /home/admin/"
 cp ./vpnclient.* /home/admin/
+echo ""
 echo "Set file owner "
 echo "# chown -R admin:admin /home/admin/vpnclient.*"
 chown -R admin:admin /home/admin/vpnclient.*
+echo ""
+echo "check files!"
 echo "# ls -lh /home/admin/vpnclient.*"
 ls -lh /home/admin/vpnclient.*
 
