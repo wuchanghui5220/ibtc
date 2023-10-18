@@ -58,6 +58,8 @@ cp $python_files $logo_pics $user_home
 echo "Set Python file  permissions"
 echo "# chown -R $user:$user $user_home"
 chown -R $user:$user $user_home
+echo "# chmod +x $user_home/$python_files"
+chmod +x $user_home/$python_files
 echo ""
 echo "# ls -lh $user_home"
 ls -lh $user_home
