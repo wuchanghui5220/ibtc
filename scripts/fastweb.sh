@@ -48,7 +48,7 @@ fi
 # Initial HTML root directory
 echo "Copying files to $html_dir"
 echo "# cp favicon.ico index.html $html_dir"
-cp favicon.ico index.html $html_dir
+cp ./web_file/* $html_dir
 
 # Copying Python files to $user_home
 python_files="fw_link_data.py fwlink.py ibtc.py ibtc2.py ofed.py"
