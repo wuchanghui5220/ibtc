@@ -35,7 +35,7 @@ fi
 
 # pull and run nginx container
 if ! docker ps -a | grep -q nginx; then
-  echo "ipsec-vpn-server container not exists, creating..."
+  echo "nginx container not exists, creating..."
   echo "# docker pull nginx"
   docker pull nginx
   echo "Start nginx container"
