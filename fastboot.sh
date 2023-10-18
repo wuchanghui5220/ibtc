@@ -1,21 +1,40 @@
 #!/bin/bash
 
 # initial 
-apt update
-apt install git
+if ! command -v git &> /dev/null
+then
+    echo "Git is not installed, installing now..."
+    sudo apt update
+    sudo apt install -y git
+else
+    echo "Git is already installed"
+fi
+
 
 # clone ibtc
-git clone https://github.com/wuchanghui5220/ibtc.git
+# git clone https://github.com/wuchanghui5220/ibtc.git
 
 # install docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-bash get-docker.sh
+if ! command -v docker &> /dev/null; then
+  echo "Docker is not installed, installing now..."
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  bash get-docker.sh
+else
+  echo "Docker is already installed"
+fi
 
 # pull and run ipsec
-docker run --name ipsec-vpn-server --restart=always -v ikev2-vpn-data:/etc/ipsec.d -v /lib/modules:/lib/modules:ro -p 500:500/udp -p 4500:4500/udp -d --privileged hwdsl2/ipsec-vpn-server
+# check ipsec-vpn-server
+if ! docker ps -a | grep -q ipsec-vpn-server; then
+  echo "ipsec-vpn-server container not exists, creating..."
+  docker run --name ipsec-vpn-server --restart=always -v ikev2-vpn-data:/etc/ipsec.d -v /lib/modules:/lib/modules:ro -p 500:500/udp -p 4500:4500/udp -d --privileged hwdsl2/ipsec-vpn-server
+else
+  echo "ipsec-vpn-server container already exists"  
+fi
+
 # download vpnclient config 
-echo "waiting for 5 second!"
-sleep 5
+echo "ipsec-vpn-server is booting, waiting for 3 second!"
+sleep 3
 echo "Copy vpnclient.mobileconfig "
 docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig ./
 echo "Copy vpnclient.sswan "
