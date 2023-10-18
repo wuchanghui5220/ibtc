@@ -10,7 +10,6 @@ else
     echo "Git is already installed"
 fi
 
-
 # clone ibtc
 # git clone https://github.com/wuchanghui5220/ibtc.git
 
