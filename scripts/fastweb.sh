@@ -52,7 +52,7 @@ cp favicon.ico index.html $html_dir
 
 # Copying Python files to $user_home
 python_files="fw_link_data.py fwlink.py ibtc.py ibtc2.py ofed.py"
-logo_pics="logonvidia.png logozy.jpg"
+logo_pics="zy_elite.png"
 echo "# cp $python_files $logo_pics $user_home"
 cp $python_files $logo_pics $user_home
 echo "Set Python file  permissions"
