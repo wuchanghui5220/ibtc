@@ -31,6 +31,10 @@ else
   echo "ipsec-vpn-server container already exists"  
 fi
 
+user="admin"
+user_home="/home/$user"
+html_dir="$user_home/html"
+
 # download vpnclient config 
 echo "ipsec-vpn-server is booting, waiting for 3 second!"
 sleep 3
@@ -40,19 +44,19 @@ echo "Copy vpnclient.sswan "
 docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan ./
 echo ""
 sleep 1
-echo "Copy files to /home/admin/"
-echo "# cp ./vpnclient.* /home/admin/"
-cp ./vpnclient.* /home/admin/
+echo "Copy files to $user_home"
+echo "# cp ./vpnclient.* $user_home"
+cp ./vpnclient.* $user_home
 echo ""
 sleep 1
 echo "Set file owner "
-echo "# chown -R admin:admin /home/admin/vpnclient.*"
-chown -R admin:admin /home/admin/vpnclient.*
+echo "# chown -R $user:$user $user_home/vpnclient.*"
+chown -R $user:$user $user_home/vpnclient.*
 echo ""
 sleep 1
 echo "check files!"
-echo "# ls -lh /home/admin/vpnclient.*"
-ls -lh /home/admin/vpnclient.*
+echo "# ls -lh $user_home/vpnclient.*"
+ls -lh $user_home/vpnclient.*
 
 echo ""
 echo "Done! Enjoy!"
