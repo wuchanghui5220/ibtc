@@ -56,7 +56,7 @@ logo_pics="logonvidia.png logozy.jpg"
 echo "# cp $python_files $logo_pics $user_home"
 cp $python_files $logo_pics $user_home
 echo "Set Python file  permissions"
-echo "# chown -R $user:$user $user_home/$python_files"
+echo "# chown -R $user:$user $user_home"
 echo ""
 echo "# ls -lh $user_home"
 ls -lh $user_home
