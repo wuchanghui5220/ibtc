@@ -4,10 +4,10 @@
 sudo apt update
 sudo apt install -y python3-pip nodejs npm
 sudo npm install -g playwright
-sudo pip install --break-system-packages playwright tqdm
+pip install --break-system-packages playwright tqdm
 
 # install networkx matplotlib
-sudo pip install --user networkx matplotlib --break-system-packages
+pip install --user networkx matplotlib --break-system-packages
 
 # Use admin to install following packages if you want to run the Script for user admin 
 playwright install
