@@ -135,8 +135,8 @@ if ! docker ps -a | grep -q nginx; then
   echo "# docker pull nginx"
   docker pull nginx
   echo "Start nginx container"
-  echo "# docker run -d --name nginx -p 80:80 -v /home/admin/html:/usr/share/nginx/html nginx"
-  docker run -d --name nginx --restart=always -p 80:80 -p 443:443 -v $conf_dir:/etc/nginx/conf.d/default.conf -v $certs_dir:/etc/nginx/certs -v $html_dir:/usr/share/nginx/html nginx
+  echo "# docker run -d --name nginx --restart=always -p 80:80 -p 443:443 -v $conf_dir:/etc/nginx/conf.d/default.conf -v $certs_dir:/etc/nginx/certs -v $html_dir:/usr/share/nginx/html nginx"
+  sudo docker run -d --name nginx --restart=always -p 80:80 -p 443:443 -v $conf_dir:/etc/nginx/conf.d/default.conf -v $certs_dir:/etc/nginx/certs -v $html_dir:/usr/share/nginx/html nginx
 else
   echo "Nginx container already exists"  
 fi
