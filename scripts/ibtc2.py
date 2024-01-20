@@ -309,8 +309,10 @@ print_dashes()
 G = nx.Graph()
 
 # Add spine switches nodes
+spacing = (leafs - spines)/2
+spacing = round(spacing, 2)
 for i in range(spines):
-    G.add_node("Spine " + str(i), pos=(i, 2))
+    G.add_node("Spine " + str(i+spacing), pos=(i+spacing, 2))
 
 # Add leaf switches nodes
 for i in range(leafs):
@@ -335,7 +337,7 @@ pos = nx.get_node_attributes(G, 'pos')
 # Add edges between spine and leaf switches
 for i in range(spines):
     for j in range(leafs):
-        G.add_edge("Spine " + str(i), "Leaf " + str(j))
+        G.add_edge("Spine " + str(i+spacing), "Leaf " + str(j))
 
 # add leaf to all nodes edge
    
