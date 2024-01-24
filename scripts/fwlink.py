@@ -125,8 +125,8 @@ with sync_playwright() as p:
     with open(info, "w") as f:
         f.write("\n".join(texts))
     file_name_zip = ""
-    a_link = "https://www.mellanox.com/downloads/firmware/"
-    e_link = ".bin.zip"
+    a_link = "https://content.mellanox.com/firmware/"
+    e_link = ".zip"
     with open(info) as f:
         for line in f:
             if "fw-" in line:
