@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>产品主页</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="utf-8">
+    <style>
+.green { color: green; font-size: 30px; }
+.blue { color: blue; font-size: 30px; }
+.red { color: red; font-size: 30px; }
+</style>
+</head>
+<body>
+    <div id="product-image">
+        <img id="myImg" src="figure-20240124-104003.png">
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
+    <div id="product-list">
+        <table>
+                <colgroup>
+                        <col style="width: 10%">
+                        <col style="width: 6%">
+                        <col style="width: 14%">
+                        <col style="width: 15%">
+                        <col style="width: 55%">
+                </colgroup>
+            <tr>
+                <th>名称</th>
+                <th style="text-align: center">图示</th>
+                <th>产品名称</th>
+                <th>产品型号</th>
+                <th>备注说明</th>
+            </tr>
+            <!-- 添加更多的产品行 -->
+            <tr>
+                <td>蓝色圆点</td>
+                <td class="blue" style="text-align: center">●</td>
+                <td>IB交换机</td>
+                <td>
+QM9790-NS2F
+                </td>
+                <td>
+64
+                        个
+NDR 
+                        IB交换机</td>
+            </tr>
+            <tr>
+                <td>蓝色直线</td>
+                <td class="blue" style="text-align: center">-</td>
+                <td>
+MPO12/APC光纤
+                </td>
+                <td>
+MFP7E10-N030
+                </td>
+                <td>每条直线代表
+4
+                        根光纤，一共有
+8
+                        组分别连接到
+8
+                        台Spine交换机</td>
+            </tr>
+            <tr>
+                <td>绿色圆点</td>
+                <td class="green" style="text-align: center">●</td>
+                <td>GPU服务器</td>
+                <td>
+H800 
+                GPU服务器</td>
+                <td>每台GPU服务器配置
+8
+                张网卡
+                </td>
+            </tr>
+            <tr>
+                <td>绿色直线</td>
+                <td class="green" style="text-align: center">-</td>
+                <td>
+MPO12/APC光纤
+                </td>
+                <td>
+MFP7E10-N030
+                </td>
+                <td>每条直线代表1根光纤，
+8
+                        条分别连接到
+8
+                        台交换机</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div id="product-list">
+        <table>
+                <colgroup>
+                        <col style="width: 15%">
+                        <col style="width: 15%">
+                        <col style="width: 50%">
+                        <col style="width: 20%">
+                </colgroup>
+            <tr>
+                <th>产品名称</th>
+                <th>产品型号</th>
+                <th>产品描述</th>
+                <th>备注</th>
+            </tr>
+            <tr>
+                <td>交换机</td>
+                <td>QM9790-NS2F</td>
+                <td>NVIDIA Quantum-2 Infiniband Switch, 32 OSFP 64 400Gbps ports, P2C</td>
+                <td>功耗：1720W</td>
+            </tr>
+            <!-- 添加更多的产品行 -->
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
