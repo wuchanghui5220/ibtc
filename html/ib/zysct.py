@@ -55,8 +55,8 @@ def add_logo(ax, ports, leafs):
     ab = AnnotationBbox(im, (x, y), xycoords=ax.transAxes, boxcoords="offset points", frameon=False)
     ax.add_artist(ab)
 
-logo = mpimg.imread('zy_elite.png')
-# logo = mpimg.imread('logonvidia.png')
+logo = mpimg.imread('elite.png')
+
 print_dashes()    
 EDR = 36
 HDR = 40
@@ -508,22 +508,22 @@ plt.savefig(png_filename, dpi=300, bbox_inches='tight', transparent=True)
 
 # 以下命令运行在Linux，如果要在windows系统运行，把以下代码全部注释！
 # 获取html目录
-sub_dir = 'html/ib'
-ret = subprocess.run(['mkdir','-p', sub_dir])
-html_dir = subprocess.getoutput('pwd').strip() + '/' + sub_dir
+# sub_dir = 'html/ib'
+# ret = subprocess.run(['mkdir','-p', sub_dir])
+# html_dir = subprocess.getoutput('pwd').strip() + '/' + sub_dir
 # html_dir = "/home/admin/html/ib"
 # 构造mv命令
-cmd = ['mv', png_filename, html_dir]
+# cmd = ['mv', png_filename, html_dir]
 # 调用mv命令移动文件
-subprocess.call(cmd)
+# subprocess.call(cmd)
 
-with open(html_dir + "/index.html") as f:
+with open("index.html") as f:
     content = f.read()
 pattern = r"<img.*?src=\"(.*?)\".*?>"
 new_content = re.sub(pattern, f'<img src="{png_filename}">', content)
 pattern = r'<img.*?id="myImg" src="(.*?)">'
 new_content = re.sub(pattern, r'<img id="myImg" src="' + png_filename + r'">', content)
-with open(html_dir + "/index.html", 'w') as f:
+with open("index.html", 'w') as f:
     f.write(new_content)
 
 
