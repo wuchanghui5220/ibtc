@@ -43,6 +43,8 @@ def add_logo(ax, ports, leafs):
     elif ports == 40:
         if leafs <= 12:
             zoom = 0.1
+        elif leafs <= 20:
+            x = 0.9
         elif leafs <= 24:
             x = 0.93
         elif leafs <= 28:
@@ -55,6 +57,46 @@ def add_logo(ax, ports, leafs):
     ab = AnnotationBbox(im, (x, y), xycoords=ax.transAxes, boxcoords="offset points", frameon=False)
     ax.add_artist(ab)
 
+def replace_line(file, line_no, new_text):
+    with open(file) as f:
+        lines = f.readlines()
+        del lines[line_no - 1]    
+        lines.insert(line_no - 1, str(new_text) + '\n')
+    
+    with open(file, 'w') as f:
+        f.writelines(lines)
+
+
+ndr_products = [
+{'name':'400G IB交换机','model':'MQM9790-NS2F','desc':'NVIDIA Quantum-2 based NDR InfiniBand Switch, 64 NDR ports, 32 OSFP ports, 2 Power Supplies (AC), Standard depth, Unmanaged, P2C airflow, RailKit', 'qty':22},
+{'name':'400G IB交换机','model':'MQM9700-NS2F','desc':'NVIDIA Quantum-2 based NDR InfiniBand Switch, 64 NDR ports, 32 OSFP ports, 2 Power Supplies (AC), Standard depth, Managed, P2C airflow, Rail Kit', 'qty':22 },
+{'name':'800G 光模块','model':'MMA4Z00-NS','desc':'NVIDIA twin port transceiver, 800Gbps,2xNDR, OSFP, 2xMPO12 APC, 850nm MM F, up to 50m, finned', 'qty':22},
+{'name':'400G 光模块','model':'MMA4Z00-NS400','desc':'NVIDIA single port transceiver, 400Gbps,NDR, OSFP, MPO12 APC, 850nm MMF,  up to 50m, flat top', 'qty':22 },
+{'name':'MPO12-APC光纤','model':'MFP7E10-N030','desc':'NVIDIA passive fiber cable, MMF, MPO12 APC to MPO12 APC, 30m', 'qty':22},
+#{'name':'MPO12-APC 1分2光纤','model':'MFP7E20-N030','desc':'NVIDIA passive fiber cable, MMF, MPO12 APC to 2xMPO12 APC, 30m', 'qty':22},
+]
+
+hdr_products = [
+{'name':'200G IB交换机','model':'MQM8790-HS2F', 'desc':'Mellanox Quantum HDR InfiniBand Switch, 40 QSFP56 ports, 2 Power Supplies (AC), unmanaged, standard depth, P2C airflow, Rail Kit', 'qty':22},
+{'name':'200G IB交换机','model':'MQM8700-HS2F', 'desc':'Mellanox Quantum HDR InfiniBand Switch, 40 QSFP56 ports, 2 Power Supplies (AC), x86 dual core, standard depth, P2C airflow, Rail Kit', 'qty':22},
+{'name':'200G IB AOC线缆', 'model':'MFS1S00-H030V', 'desc':'Mellanox active optical cable, up to 200Gb/s IB HDR, QSFP56, 30m', 'qty':22},
+#{'name':'200G IB AOC 1分2线缆', 'model':'MFS1S50-H030V','desc':'Mellanox active optical cable, 200Gb/s to 2x100Gb/s IB HDR, QSFP56 to 2x QSFP56, 30m', 'qty':22},
+]
+
+def generate_table_tr(products, model, qty):
+    new_table_tr = ''
+
+    for product in products:
+        if product['model'] == model:
+            new_table += '<tr>'
+            new_table += '  <td>{}</td>'.format(product['name'])
+            new_table += '  <td>{}</td>'.format(product['model'])
+            new_table += '  <td>{}</td>'.format(product['desc'])
+            new_table += '  <td>{}</td>'.format(qty)
+            new_table += '</tr>'
+
+    return new_table_tr
+
 logo = mpimg.imread('elite.png')
 
 print_dashes()    
@@ -64,66 +106,75 @@ NDR200 = 128
 NDR = 64
 ports = 0
 speed = ""
+products = []
+switch_name = ""
+switch_type = ""
+cable_name = ""
+cable2_name = ""
+cable_type = ""
+cable2_type = ""
+ot_800 = ""
+ot_400 = ""
 
 ratio_input = input("Enter ratio (default is 1:1): ")
 ratio = int(ratio_input) if ratio_input.strip() else 1
 RA = ratio + 1
 print("Ratio is " + str(RA))
 print_dashes()
-input_ports_str = input("""1: EDR
-2: HDR
-3: NDR200
-4: NDR
+input_ports_str = input("""1: HDR
+2: NDR
 please select your Speed: """)
 
-input_ports = int(input_ports_str) if input_ports_str.strip() else 4
+input_ports = int(input_ports_str) if input_ports_str.strip() else 2
 ports = {
-    1: EDR,
-    2: HDR,
-    3: NDR200,
-    4: NDR
+    1: HDR,
+    2: NDR
 }.get(input_ports, None)
 speed = {
-    1: "EDR",
-    2: "HDR",
-    3: "NDR200",
-    4: "NDR"
+    1: "HDR",
+    2: "NDR"
 }.get(input_ports, None)
+
+if speed == "NDR":
+    products = ndr_products
+    switch_name = "400G IB 交换机"
+    cable_name = "MPO12-APC 光纤"
+    cable2_name = "MPO12-APC 1分2光纤"
+    cable_type = "MFP7E10-N030"
+    cable2_type = "MFP7E20-N030"
+    ot_800 = "MMA4Z00-NS"
+    ot_400 = "MMA4Z00-NS400"
+
+else:
+    products = hdr_products
+    switch_name = "200G IB 交换机"
+    cable_name = "200G IB AOC 线缆"
+    cable2_name = "200G IB AOC 1分2线缆"
+    cable_type = "MFS1S00-H030V"
+    cable2_type = "MFS1S50-H030V"
 
 ratio_text = ""
 # Update ports based on RA and current ports
-if RA == 2 and ports == EDR:
+if RA == 2 and ports == HDR:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:1"
-    switch_tpye = "SB7890"
-elif RA == 2 and ports == HDR:
-    bisection = math.ceil(ports / RA)
-    ratio_text = "1:1"
-    switch_tpye = "QM8790"
-elif RA == 2 and ports == NDR200:
-    bisection = math.ceil(ports / RA)
-    ratio_text = "1:1"
-    switch_tpye = "QM9790"
+    switch_type = "MQM8790-HS2F"
 elif RA == 2 and ports == NDR:
     bisection = math.ceil(ports / RA)
     ratio_text = "1:1"
-    switch_tpye = "QM9790"
-elif RA == 3 and ports == EDR:
-    bisection = math.ceil(ports / RA)
-    ratio_text = "1:2"
-    switch_tpye = "SB7890"
+    switch_type = "MQM9790-NS2F"
 elif RA == 3 and ports == HDR:
     bisection = 16
     ratio_text = "3:5"
-    switch_tpye = "QM8790"
+    switch_type = "MQM8790-HS2F"
 elif RA == 3 and ports == NDR:
     bisection = 20
     ratio_text = "1:2"
-    switch_tpye = "QM9790"
+    switch_type = "MQM9790-NS2F"
 else:
-    bisection = 18
+    bisection = 32
     ratio_text = "1:1"
-    switch_tpye = "SB7890"
+    switch_type = "MQM9790-NS2F"
     
 print("Fabric speed is " + speed)
 
@@ -145,6 +196,7 @@ gpu_leafs = 0
 storage_leafs = 0
 cpu_leafs = 0
 other_leafs = 0
+gpu_type = ""
 gpu_servers = 0
 storage_servers = 0
 cpu_servers = 0
@@ -162,6 +214,9 @@ gpu_server_num = int(gpu_server_num_input) if gpu_server_num_input.isdigit() els
 if  gpu_server_num == 0:
     card_num = 0
 else:
+    gpu_type = input("Enter GPU model(Default H800): ")
+    if gpu_type == "":
+        gpu_type = "H800"
     card_num_input = input("Select GPU server's NIC Number(1 or 2 or 4 or 8): ")
     card_num = int(card_num_input) if card_num_input in ["1", "2", "4", "8"] else 8
     if ports == NDR200 and (card_num == 4 or card_num == 8):
@@ -311,20 +366,7 @@ Spine2Leaf_OT_number = 0
 Leaf2Server_OT_number = 0
 Switch_OT = 0
 Hca_OT = 0
-if speed == "EDR":
-    Switch_OT = (spines + leafs) * 36
-    Hca_OT = nodes
-elif speed == "HDR":
-    Spine2Leaf_OT_number = leafs * 20 * 2
-    Leaf2Server_OT_number = nodes
-    Switch_OT = Spine2Leaf_OT_number + Leaf2Server_OT_number
-    Hca_OT = nodes
-elif speed == "NDR":
-    Spine2Leaf_OT_number = leafs * 16 * 2
-    Leaf2Server_OT_number = math.ceil(nodes/2)
-    Switch_OT = Spine2Leaf_OT_number + Leaf2Server_OT_number
-    Hca_OT = nodes
-elif speed == "NDR200":
+if speed == "NDR":
     Spine2Leaf_OT_number = leafs * 16 * 2
     Leaf2Server_OT_number = math.ceil(nodes/2)
     Switch_OT = Spine2Leaf_OT_number + Leaf2Server_OT_number
@@ -332,12 +374,9 @@ elif speed == "NDR200":
 print()
 
 # spine to leaf cables
-if ports == NDR200:
-    spine_to_leaf_cables = int(leafs * (bisection / 2))
-    leaf_to_server_cables = int(math.ceil(nodes/2))
-else:
-    spine_to_leaf_cables = int(leafs * bisection)
-    leaf_to_server_cables = int(nodes)
+spine_to_leaf_cables = int(leafs * bisection)
+# leaf to server cables
+leaf_to_server_cables = int(nodes)
 
 
 print_dashes()
@@ -467,12 +506,14 @@ ax2 = plt.subplot(gs[1, :]) # create a subplot in the second row
 gs.update(wspace=10, hspace=0.1)
 ax2.axis("off")
 nx.draw_networkx(G, pos, with_labels=False, ax=ax1, node_color=node_color, edge_color=edge_color_map)
+ax1.set_xlabel(str(gpu_server_num) + " " + gpu_type + " " + str(card_num) + "*" + speed + " InfiniBand Network Topology", fontdict={'size': 15})
 
 tx, ty, tx_ = 0.036, 0.8, 0.1
 
-# if use dac cable, 
+# leaf to spine line 
 leaf2spine_each_line = int(bisection/spines)
 print(f"Leaf to Spine each line: {leaf2spine_each_line}")
+uplink_group = spines
 
 if dac_cable_number > 0:
     leaf_to_server_cables = leaf_to_server_cables - (dac_cable_number * 2)
@@ -489,13 +530,11 @@ print("leaf to server cables: " + str(leaf_to_server_cables) + " (Max:" + str(ma
 
 print("all cables: " + str(all_cables))
 print()
-print(f"Switch optical transceiver: {Spine2Leaf_OT_number} + {Leaf2Server_OT_number} = {Switch_OT}")
-print("HCA optical transceiver: " + str(Hca_OT))
 
 # ax2.legend(handles=legend_labels, loc='upper right', bbox_to_anchor=(1, 1)) # add legend to ax2
 font = {'fontsize': 14, 'fontweight': 'bold'}
 # 使用ax1.set_title方法来设置标题
-ax1.set_title('Infiniband Topology Calculator v0.10.2', fontdict=font) # set the title for ax1
+ax1.set_title('Infiniband Topology Calculator v0.12.0', fontdict=font) # set the title for ax1
 # Add Logo information about the fabric to the canvas
 add_logo(ax1, ports, leafs)
 
@@ -503,19 +542,32 @@ plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
 current_time = time.strftime("%Y%m%d-%H%M%S")
 png_filename = f'figure-{current_time}.png'
 plt.savefig(png_filename, dpi=300, bbox_inches='tight', transparent=True)
-# 要在屏幕显示图像，把下一行代码取消注释
-# plt.show()
 
-# 以下命令运行在Linux，如果要在windows系统运行，把以下代码全部注释！
-# 获取html目录
-# sub_dir = 'html/ib'
-# ret = subprocess.run(['mkdir','-p', sub_dir])
-# html_dir = subprocess.getoutput('pwd').strip() + '/' + sub_dir
-# html_dir = "/home/admin/html/ib"
-# 构造mv命令
-# cmd = ['mv', png_filename, html_dir]
-# 调用mv命令移动文件
-# subprocess.call(cmd)
+print_dashes()
+print("cable_type" + cable_type)
+print_dashes()
+
+data = []
+data.append({'name': 'spine_switch', 'model': switch_type, 'num': spines, 'note': 'Spine 交换机'})
+data.append({'name': 'leaf_switch', 'model': switch_type, 'num': leafs, 'note': 'Leaf 交换机'})
+data.append({'name': 'spine_to_leaf_cables','model': cable_type, 'num': spine_to_leaf_cables, 'note': 'Spine 到 Leaf 之间互连的线缆'})
+data.append({'name': 'leaf_to_server_cables', 'model': cable_type, 'num': leaf_to_server_cables, 'note': 'Leaf 到 Server 之间互连的线缆'})
+#if cable2_type != '':
+#    data.append({'name': 'leaf_to_server2_cables', 'model': cable2_type, 'num': leaf_to_server2_cables})
+
+if speed == "NDR":
+    data.append({'name': 'spine_to_leaf_ot', 'model': 'MMA4Z00-NS', 'num': Spine2Leaf_OT_number, 'note': 'Spine 到 Leaf 之间互连 800G 模块'})
+    data.append({'name': 'leaf_to_server_ot', 'model':'MMA4Z00-NS', 'num': Leaf2Server_OT_number, 'note': 'Leaf 到 Server 交换机端 800G 模块'})
+    data.append({'name': 'hca_ot', 'model': 'MMA4Z00-NS400', 'num': Hca_OT, 'note': '网卡端 400G 模块'})
+
+
+print("spines: " + str(spines))
+print("leafs: " + str(leafs))
+print("spine to leaf cable: " + str(spine_to_leaf_cables))
+print("leaf to server cables: " + str(leaf_to_server_cables) + " (Max:" + str(max_leaf_to_server_cables) + ")")
+if speed == "NDR":
+    print(f"Switch optical transceiver: {Spine2Leaf_OT_number} + {Leaf2Server_OT_number} = {Switch_OT}")
+    print("HCA optical transceiver: " + str(Hca_OT))
 
 with open("index.html") as f:
     content = f.read()
@@ -527,3 +579,59 @@ with open("index.html", 'w') as f:
     f.write(new_content)
 
 
+#print(data)
+lines = {
+    45: switch_name,
+    48: switch_type,
+    51: ports, 
+    53: speed,
+    
+    60: cable_name,
+    63: cable_type,
+    66: leaf2spine_each_line,
+    68: uplink_group,
+    70: spines,
+    
+    78: gpu_type, 
+    81: card_num,
+    83: speed,
+    
+    91: cable_name,
+    94: cable_type,
+    97: card_num, 
+    99: card_num
+}
+
+for line, val in lines.items():
+    replace_line('index.html', line, val)
+
+#print(products)
+with open('index.html', 'r') as f:
+    content = f.read()
+    lines = content.splitlines()
+    del lines[122:]
+
+    for item in data:
+        model = item['model']
+        qty = item['num']
+        note = item['note']
+        for product in products:
+            if product['model'] == model:
+                lines.append('<tr>')
+                lines.append('<td>{}</td>'.format(product['name']))
+                lines.append('<td>{}</td>'.format(product['model']))
+                lines.append('<td>{}</td>'.format(product['desc']))
+                lines.append('<td>{}</td>'.format(qty))
+                lines.append('<td>{}</td>'.format(note))
+                lines.append('</tr>')
+    # 重新追加结尾标签
+    lines.append('        </table>')
+    lines.append('    </div>')
+    lines.append('    <script src="script.js"></script>')
+    lines.append('    <footer><p>Copyright &copy; 2024 Vincent&commat;nvlink.vip </p></footer> ')
+    lines.append('    </body>') 
+    lines.append('</html>')
+
+    content = "\n".join(lines)
+with open('index.html', 'w') as f:
+    f.write(content)
