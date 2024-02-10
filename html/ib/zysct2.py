@@ -601,8 +601,8 @@ png_filename = f'figure-{current_time}.png'
 plt.savefig(png_filename, dpi=300, bbox_inches='tight', transparent=True)
 
 print_dashes()
-#print("cable_type" + cable_type)
-print_dashes()
+# print("cable_type" + cable_type)
+# print_dashes()
 
 data = []
 data.append({'name': 'spine_switch', 'model': switch_type, 'num': spines, 'note': 'Spine 交换机'})
