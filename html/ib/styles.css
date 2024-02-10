@@ -109,3 +109,15 @@ footer {
     background-color: #4CAF50;
     color: white;
 }
+
+a {
+    color: #fff; /* 白色文本，适用于深色背景 */
+    text-decoration: none; /* 去除下划线 */
+    transition: color 0.3s ease-in-out; /* 颜色变化过渡效果 */
+}
+
+a:hover,
+a:focus {
+    color: #4CAF50; /* 鼠标悬停或聚焦时的颜色，与你的 #product-list th 背景色一致 */
+    text-decoration: underline; /* 鼠标悬停或聚焦时添加下划线，增加可见性 */
+}
