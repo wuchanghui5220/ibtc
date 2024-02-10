@@ -70,17 +70,17 @@ def replace_line(file, line_no, new_text):
 ndr_products = [
 {'name':'400G IB交换机','model':'MQM9790-NS2F','desc':'NVIDIA Quantum-2 based NDR InfiniBand Switch, 64 NDR ports, 32 OSFP ports, 2 Power Supplies (AC), Standard depth, Unmanaged, P2C airflow, RailKit', 'qty':22},
 {'name':'400G IB交换机','model':'MQM9700-NS2F','desc':'NVIDIA Quantum-2 based NDR InfiniBand Switch, 64 NDR ports, 32 OSFP ports, 2 Power Supplies (AC), Standard depth, Managed, P2C airflow, Rail Kit', 'qty':22 },
-{'name':'800G 光模块','model':'MMA4Z00-NS','desc':'NVIDIA twin port transceiver, 800Gbps,2xNDR, OSFP, 2xMPO12 APC, 850nm MM F, up to 50m, finned', 'qty':22},
+{'name':'800G 光模块','model':'MMA4Z00-NS','desc':'NVIDIA twin port transceiver, 800Gbps,2xNDR, OSFP, 2xMPO12 APC, 850nm MMF, up to 50m, finned', 'qty':22},
 {'name':'400G 光模块','model':'MMA4Z00-NS400','desc':'NVIDIA single port transceiver, 400Gbps,NDR, OSFP, MPO12 APC, 850nm MMF,  up to 50m, flat top', 'qty':22 },
 {'name':'MPO12-APC光纤','model':'MFP7E10-N030','desc':'NVIDIA passive fiber cable, MMF, MPO12 APC to MPO12 APC, 30m', 'qty':22},
-#{'name':'MPO12-APC 1分2光纤','model':'MFP7E20-N030','desc':'NVIDIA passive fiber cable, MMF, MPO12 APC to 2xMPO12 APC, 30m', 'qty':22},
+{'name':'MPO12-APC 1分2光纤','model':'MFP7E20-N030','desc':'NVIDIA passive fiber cable, MMF, MPO12 APC to 2xMPO12 APC, 30m', 'qty':22},
 ]
 
 hdr_products = [
 {'name':'200G IB交换机','model':'MQM8790-HS2F', 'desc':'Mellanox Quantum HDR InfiniBand Switch, 40 QSFP56 ports, 2 Power Supplies (AC), unmanaged, standard depth, P2C airflow, Rail Kit', 'qty':22},
 {'name':'200G IB交换机','model':'MQM8700-HS2F', 'desc':'Mellanox Quantum HDR InfiniBand Switch, 40 QSFP56 ports, 2 Power Supplies (AC), x86 dual core, standard depth, P2C airflow, Rail Kit', 'qty':22},
 {'name':'200G IB AOC线缆', 'model':'MFS1S00-H030V', 'desc':'Mellanox active optical cable, up to 200Gb/s IB HDR, QSFP56, 30m', 'qty':22},
-#{'name':'200G IB AOC 1分2线缆', 'model':'MFS1S50-H030V','desc':'Mellanox active optical cable, 200Gb/s to 2x100Gb/s IB HDR, QSFP56 to 2x QSFP56, 30m', 'qty':22},
+{'name':'200G IB AOC 1分2线缆', 'model':'MFS1S50-H030V','desc':'Mellanox active optical cable, 200Gb/s to 2x100Gb/s IB HDR, QSFP56 to 2x QSFP56, 30m', 'qty':22},
 ]
 
 def generate_table_tr(products, model, qty):
