@@ -22,7 +22,7 @@ fi
 
 user="admin"
 user_home="/home/$user"
-html_dir="$user_home/html"
+html_dir="$user_home/ibtc/html"
 
 # check html directory
 if [ ! -d "$html_dir" ]; then
@@ -39,29 +39,29 @@ if ! docker ps -a | grep -q nginx; then
   echo "# docker pull nginx"
   docker pull nginx
   echo "Start nginx container"
-  echo "# docker run -d --name nginx -p 80:80 -v /home/admin/html:/usr/share/nginx/html nginx"
-  docker run -d --name nginx -p 80:80 -v /home/admin/html:/usr/share/nginx/html nginx
+  echo "# docker run -d --name nginx -p 80:80 -v /home/admin/ibtc/html:/usr/share/nginx/html nginx"
+  docker run -d --name nginx -p 80:80 -v /home/admin/ibtc/html:/usr/share/nginx/html nginx
 else
   echo "Nginx container already exists"  
 fi
 
 # Initial HTML root directory
-echo "Copying files to $html_dir"
-echo "# cp favicon.ico index.html $html_dir"
-cp ./web_file/* $html_dir
+#echo "Copying files to $html_dir"
+#echo "# cp favicon.ico index.html $html_dir"
+#cp ./web_file/* $html_dir
 
 # Copying Python files to $user_home
-python_files="fw_link_data.py fwlink.py ibtc2.py ofed.py"
-logo_pics="zy_elite.png"
-echo "# cp $python_files $logo_pics $user_home"
-cp $python_files $logo_pics $user_home
-echo "Set Python file  permissions"
-echo "# chown -R $user:$user $user_home"
+#python_files="fw_link_data.py fwlink.py ibtc2.py ofed.py"
+#logo_pics="zy_elite.png"
+#echo "# cp $python_files $logo_pics $user_home"
+#cp $python_files $logo_pics $user_home
+#echo "Set Python file  permissions"
+#echo "# chown -R $user:$user $user_home"
 chown -R $user:$user $user_home
-echo "# chmod +x $user_home/*.py"
-chmod +x $user_home/*.py
+echo "# chmod +x $html_dir/*.py"
+chmod +x $html_dir/*.py
 echo ""
-echo "# ls -lh $user_home"
-ls -lh $user_home
+echo "# ls -lh $html_dir"
+ls -lh $html_dir
 echo ""
 echo "Done! Enjoy!"
