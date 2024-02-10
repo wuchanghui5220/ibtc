@@ -12,7 +12,7 @@
 </style></head>
 <body>
     <div id="product-image">
-        <img id="myImg" src="figure-20240128-113519.png">
+        <img id="myImg" src="figure-20240209-115729.png">
     </div>
 
     <!-- The Modal -->
@@ -42,32 +42,32 @@
                 <td>蓝色圆点</td>
                 <td class="blue" style="text-align: center">●</td>
                 <td>
-400G IB 交换机
+200G IB 交换机
                 </td>
                 <td>
-MQM9790-NS2F
+MQM8790-HS2F
                 </td>
                 <td>
-64
+40
                         端口
-NDR
+HDR
                         IB交换机</td>
             </tr>
             <tr>
                 <td>蓝色直线</td>
                 <td class="lightblue" style="text-align: center">-</td>
                 <td>
-MPO12-APC 光纤
+200G IB AOC 线缆
                 </td>
                 <td>
-MFP7E10-N030
+MFS1S00-H030V
                 </td>
                 <td>每条直线代表
-2
+1
                         根光纤，一共有
-16
+20
                         组分别连接到
-16
+20
                         台Spine交换机</td>
             </tr>
             <tr>
@@ -75,12 +75,12 @@ MFP7E10-N030
                 <td class="green" style="text-align: center">●</td>
                 <td>GPU服务器</td>
                 <td>
-H800
+A100
                 GPU服务器</td>
                 <td>每台GPU服务器配置
 8
                 张
-NDR
+HDR
                 网卡
                 </td>
             </tr>
@@ -88,10 +88,10 @@ NDR
                 <td>绿色直线</td>
                 <td class="green" style="text-align: center">-</td>
                 <td>
-MPO12-APC 光纤
+200G IB AOC 线缆
                 </td>
                 <td>
-MFP7E10-N030
+MFS1S00-H030V
                 </td>
                 <td>每条直线代表 1 根光纤，
 8
@@ -121,56 +121,36 @@ MFP7E10-N030
             </tr>
 
 <tr>
-<td>400G IB交换机</td>
-<td>MQM9790-NS2F</td>
-<td>NVIDIA Quantum-2 based NDR InfiniBand Switch, 64 NDR ports, 32 OSFP ports, 2 Power Supplies (AC), Standard depth, Unmanaged, P2C airflow, RailKit</td>
-<td>16</td>
+<td>200G IB交换机</td>
+<td>MQM8790-HS2F</td>
+<td>Mellanox Quantum HDR InfiniBand Switch, 40 QSFP56 ports, 2 Power Supplies (AC), unmanaged, standard depth, P2C airflow, Rail Kit</td>
+<td>20</td>
 <td>Spine 交换机</td>
 </tr>
 <tr>
-<td>400G IB交换机</td>
-<td>MQM9790-NS2F</td>
-<td>NVIDIA Quantum-2 based NDR InfiniBand Switch, 64 NDR ports, 32 OSFP ports, 2 Power Supplies (AC), Standard depth, Unmanaged, P2C airflow, RailKit</td>
-<td>32</td>
+<td>200G IB交换机</td>
+<td>MQM8790-HS2F</td>
+<td>Mellanox Quantum HDR InfiniBand Switch, 40 QSFP56 ports, 2 Power Supplies (AC), unmanaged, standard depth, P2C airflow, Rail Kit</td>
+<td>40</td>
 <td>Leaf 交换机</td>
 </tr>
 <tr>
-<td>MPO12-APC光纤</td>
-<td>MFP7E10-N030</td>
-<td>NVIDIA passive fiber cable, MMF, MPO12 APC to MPO12 APC, 30m</td>
-<td>1024</td>
+<td>200G IB AOC线缆</td>
+<td>MFS1S00-H030V</td>
+<td>Mellanox active optical cable, up to 200Gb/s IB HDR, QSFP56, 30m</td>
+<td>800</td>
 <td>Spine 到 Leaf 之间互连的线缆</td>
 </tr>
 <tr>
-<td>MPO12-APC光纤</td>
-<td>MFP7E10-N030</td>
-<td>NVIDIA passive fiber cable, MMF, MPO12 APC to MPO12 APC, 30m</td>
-<td>1024</td>
+<td>200G IB AOC线缆</td>
+<td>MFS1S00-H030V</td>
+<td>Mellanox active optical cable, up to 200Gb/s IB HDR, QSFP56, 30m</td>
+<td>792</td>
 <td>Leaf 到 Server 之间互连的线缆</td>
-</tr>
-<tr>
-<td>800G 光模块</td>
-<td>MMA4Z00-NS</td>
-<td>NVIDIA twin port transceiver, 800Gbps,2xNDR, OSFP, 2xMPO12 APC, 850nm MM F, up to 50m, finned</td>
-<td>1024</td>
-<td>Spine 到 Leaf 之间互连 800G 模块</td>
-</tr>
-<tr>
-<td>800G 光模块</td>
-<td>MMA4Z00-NS</td>
-<td>NVIDIA twin port transceiver, 800Gbps,2xNDR, OSFP, 2xMPO12 APC, 850nm MM F, up to 50m, finned</td>
-<td>512</td>
-<td>Leaf 到 Server 交换机端 800G 模块</td>
-</tr>
-<tr>
-<td>400G 光模块</td>
-<td>MMA4Z00-NS400</td>
-<td>NVIDIA single port transceiver, 400Gbps,NDR, OSFP, MPO12 APC, 850nm MMF,  up to 50m, flat top</td>
-<td>1024</td>
-<td>网卡端 400G 模块</td>
 </tr>
         </table>
     </div>
     <script src="script.js"></script>
     <footer><p>Copyright &copy; 2024 Vincent&commat;nvlink.vip </p></footer> 
     </body>
+</html>
