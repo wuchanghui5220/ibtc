@@ -601,7 +601,7 @@ png_filename = f'figure-{current_time}.png'
 plt.savefig(png_filename, dpi=300, bbox_inches='tight', transparent=True)
 
 print_dashes()
-print("cable_type" + cable_type)
+#print("cable_type" + cable_type)
 print_dashes()
 
 data = []
