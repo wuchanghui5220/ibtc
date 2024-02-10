@@ -685,7 +685,7 @@ server_to_leaf_mappings_combined = generate_leaf_to_server_mappings_combined(ser
 
 
 current_time = time.strftime("%Y%m%d-%H%M%S")
-excel_filename = f'ib_port_mapping_{current_time}.xlsx'
+excel_filename = f'{gpu_server_num}_{gpu_type}_{card_num}x{speed}_ib_port_mapping_{current_time}.xlsx'
 # 创建一个Excel文件并添加所有工作表
 with pd.ExcelWriter(excel_filename) as writer:
     # 保存leaf到spine的映射到sheet1
