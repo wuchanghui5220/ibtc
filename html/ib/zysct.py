@@ -4,6 +4,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gs
+import pandas as pd
 import time
 import subprocess
 import math
@@ -65,6 +66,90 @@ def replace_line(file, line_no, new_text):
     
     with open(file, 'w') as f:
         f.writelines(lines)
+
+# 生成leaf到spine的端口映射列表
+def generate_port_mappings_combined(leaf_count, spine_count, leaf_ports_per_spine, leaf_start_port, spine_start_port, reverse=False):
+    mappings = []
+    for leaf_index in range(leaf_count):
+        leaf_name = f'leaf{leaf_index + 1:02d}'
+        for spine_index in range(spine_count):
+            spine_name = f'spine{spine_index + 1:02d}'
+            for port_index in range(leaf_ports_per_spine):
+                if not reverse:
+                    leaf_port = leaf_start_port + port_index + (leaf_ports_per_spine * spine_index)
+                    spine_port = spine_start_port + port_index + (leaf_ports_per_spine * leaf_index)
+                    local = f'{leaf_name}-{leaf_port}'
+                    remote = f'{spine_name}-{spine_port}'
+                else:
+                    spine_port = spine_start_port + port_index + (leaf_ports_per_spine * leaf_index)
+                    leaf_port = leaf_start_port + port_index + (leaf_ports_per_spine * spine_index)
+                    local = f'{spine_name}-{spine_port}'
+                    remote = f'{leaf_name}-{leaf_port}'
+                mapping = {
+                    "本端": local,
+                    "对端": remote
+                }
+                mappings.append(mapping)
+    return mappings
+
+# 生成leaf到server的端口映射列表
+def generate_leaf_to_server_mappings_combined(server_count, leaf_count, ports_per_server, switch_ports, reverse=False):
+    group_size = int(switch_ports / 2)
+    mappings = []
+    ports_per_leaf = server_count // (leaf_count // ports_per_server) if server_count >= group_size else server_count
+
+    for server_index in range(server_count):
+        server_name = f'server{server_index + 1:02d}'
+        group_offset = (server_index // group_size) * ports_per_server
+
+        for port_index in range(ports_per_server):
+            leaf_number = group_offset + port_index + 1
+            leaf_name = f'leaf{leaf_number:02d}'
+            leaf_port = server_index % group_size + 1
+
+            if not reverse:
+                local = f'{leaf_name}-{leaf_port}'
+                remote = f'{server_name}-{port_index + 1}'
+            else:
+                local = f'{server_name}-{port_index + 1}'
+                remote = f'{leaf_name}-{leaf_port}'
+
+            mapping = {
+                "本端": local,
+                "对端": remote
+            }
+            mappings.append(mapping)
+
+    return mappings
+
+def process_data(df, prefix, count):
+    # 创建一个空的DataFrame用于存放最终数据
+    final_df = pd.DataFrame()
+
+    # 循环处理prefix01到prefixN
+    for i in range(1, count + 1):
+        item_name = f'{prefix}{i:02}'  # 格式化item名称
+        # 筛选包含当前item名称的行，使用正则表达式匹配整个单词
+        regex_pattern = f'\\b{item_name}\\b'  # 构建正则表达式
+        df_item = df[df['本端'].str.contains(regex_pattern, na=False, regex=True)]
+        
+        # 重置索引，为了转置后的DataFrame保持干净的索引
+        df_item.reset_index(drop=True, inplace=True)
+        
+        # 转置DataFrame，将两列转换为两行
+        df_item_transposed = df_item.T
+        
+        # 重置索引，这样列名会变成一行数据
+        df_item_transposed.reset_index(inplace=True)
+        
+        # 转置后的DataFrame已经是两行了，直接追加到最终的DataFrame中
+        final_df = pd.concat([final_df, df_item_transposed], ignore_index=True)
+
+        # 追加一个空行
+        empty_row = pd.DataFrame([['']*len(df_item_transposed.columns)], columns=df_item_transposed.columns)
+        final_df = pd.concat([final_df, empty_row], ignore_index=True)
+
+    return final_df
 
 
 ndr_products = [
@@ -544,8 +629,7 @@ png_filename = f'figure-{current_time}.png'
 plt.savefig(png_filename, dpi=300, bbox_inches='tight', transparent=True)
 
 print_dashes()
-print("cable_type" + cable_type)
-print_dashes()
+#print("cable_type" + cable_type)
 
 data = []
 data.append({'name': 'spine_switch', 'model': switch_type, 'num': spines, 'note': 'Spine 交换机'})
@@ -605,7 +689,72 @@ lines = {
 for line, val in lines.items():
     replace_line('index.html', line, val)
 
-#print(products)
+# Leaf到Spine的端口映射列表，相关参数和执行结果
+leaf_count = leafs # leaf交换机的数量
+spine_count = spines  # spine交换机的数量
+leaf_ports_per_spine = leaf2spine_each_line  # 每个spine交换机映射的leaf端口数量
+leaf_start_port = int(ports / 2) + 1 # leaf交换机的起始端口号
+spine_start_port = 1  # spine交换机的起始端口号
+
+# 生成映射列表
+port_mappings_combined = generate_port_mappings_combined(leaf_count, spine_count, leaf_ports_per_spine, leaf_start_port, spine_start_port)
+port_mappings_combined_reverse = generate_port_mappings_combined(leaf_count, spine_count, leaf_ports_per_spine, leaf_start_port, spine_start_port, reverse=True)
+
+# Leaf到Server的端口映射列表，相关参数和执行结果
+server_count = gpu_server_num  # 服务器的数量
+leaf_count = leafs    # leaf交换机的数量
+ports_per_server = card_num # 每台服务器的网卡端口数量
+switch_ports = ports   # 交换机的端口数量
+
+# 生成映射列表
+leaf_to_server_mappings_combined = generate_leaf_to_server_mappings_combined(server_count, leaf_count, ports_per_server, switch_ports)
+server_to_leaf_mappings_combined = generate_leaf_to_server_mappings_combined(server_count, leaf_count, ports_per_server, switch_ports, reverse=True)
+
+
+current_time = time.strftime("%Y%m%d-%H%M%S")
+excel_filename = f'{gpu_server_num}_{gpu_type}_{card_num}x{speed}_ib_port_mapping_{current_time}.xlsx'
+excel_filename2 = f'{gpu_server_num}_{gpu_type}_{card_num}x{speed}_ib_device_port_mapping_{current_time}.xlsx'
+# 创建一个Excel文件并添加所有工作表
+with pd.ExcelWriter(excel_filename) as writer:
+    # 保存leaf到spine的映射到sheet1
+    pd.DataFrame(port_mappings_combined).to_excel(writer, index=False, sheet_name='Leaf_to_Spine')
+    # 保存spine到leaf的映射到sheet2
+    pd.DataFrame(port_mappings_combined_reverse).to_excel(writer, index=False, sheet_name='Spine_to_Leaf')
+    # 保存leaf到server的映射到sheet3
+    pd.DataFrame(leaf_to_server_mappings_combined).to_excel(writer, index=False, sheet_name='Leaf_to_Server')
+    # 保存server到leaf的映射到sheet4
+    pd.DataFrame(server_to_leaf_mappings_combined).to_excel(writer, index=False, sheet_name='Server_to_Leaf')
+
+
+# 读取Excel文件中的所有sheet
+xls = pd.ExcelFile(excel_filename)
+
+# 定义每个sheet的搜索条件和数量
+sheet_conditions = {
+    'Leaf_to_Spine': ('leaf', leafs),  # 根据实际情况调整leaf的数量
+    'Spine_to_Leaf': ('spine', spines),  # 根据实际情况调整spine的数量
+    'Leaf_to_Server': ('leaf', leafs),  # 根据实际情况调整leaf的数量
+    'Server_to_Leaf': ('server', gpu_server_num),  # 根据实际情况调整server的数量
+}
+
+# 创建一个Excel写入器
+writer = pd.ExcelWriter(excel_filename2)
+
+# 循环遍历所有sheet
+for sheet_name, (prefix, count) in sheet_conditions.items():
+    # 读取当前sheet的数据
+    df = pd.read_excel(xls, sheet_name=sheet_name)
+
+    # 处理数据，并获取新的DataFrame
+    new_df = process_data(df, prefix, count)
+
+    # 将处理后的数据写入新的Excel文件的对应sheet中
+    new_df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+# 保存新的Excel文件
+writer.close()
+
+
 with open('index.html', 'r') as f:
     content = f.read()
     lines = content.splitlines()
@@ -628,7 +777,9 @@ with open('index.html', 'r') as f:
     lines.append('        </table>')
     lines.append('    </div>')
     lines.append('    <script src="script.js"></script>')
-    lines.append('    <footer><p>Copyright &copy; 2024 Vincent&commat;nvlink.vip </p></footer> ')
+    html_line = f'<footer><p>Copyright © 2024 Vincent@nvlink.vip <a href="{excel_filename}">Mapping1</a> <a href="{excel_filename2}">Mapping2</a></p></footer>'
+    lines.append(html_line)
+    #lines.append('    <footer><p>Copyright &copy; 2024 Vincent&commat;nvlink.vip <a href="{excel_filename}">Port_Mapping</a></p></footer> ')
     lines.append('    </body>') 
     lines.append('</html>')
 
