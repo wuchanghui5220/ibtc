@@ -659,7 +659,7 @@ pattern = r"<img.*?src=\"(.*?)\".*?>"
 new_content = re.sub(pattern, f'<img src="{png_filename}">', content)
 pattern = r'<img.*?id="myImg" src="(.*?)">'
 new_content = re.sub(pattern, r'<img id="myImg" src="' + png_filename + r'">', content)
-with open("index.html", 'w') as f:
+with open("index.html", 'w', encodeing='UTF-8') as f:
     f.write(new_content)
 
 
@@ -755,7 +755,7 @@ for sheet_name, (prefix, count) in sheet_conditions.items():
 writer.close()
 
 
-with open('index.html', 'r') as f:
+with open('index.html', 'r', encodeing='UTF-8') as f:
     content = f.read()
     lines = content.splitlines()
     del lines[122:]
