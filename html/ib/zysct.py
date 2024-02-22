@@ -806,7 +806,6 @@ with open('index.html', 'r') as f:
     lines.append('    <script src="script.js"></script>')
     html_line = f'<footer><p>Copyright © 2024 Vincent@nvlink.vip <a href="{excel_filename}">pm</a><a href="modified_{excel_filename}">Mpm</a> <a href="{excel_filename2}">dm</a><a href="modified_{excel_filename2}">Mdm</a></p></footer>'
     lines.append(html_line)
-    #lines.append('    <footer><p>Copyright &copy; 2024 Vincent&commat;nvlink.vip <a href="{excel_filename}">Port_Mapping</a></p></footer> ')
     lines.append('    </body>') 
     lines.append('</html>')
 
