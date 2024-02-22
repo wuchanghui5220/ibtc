@@ -9,6 +9,7 @@ import time
 import subprocess
 import math
 import re
+import openpyxl
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
@@ -659,7 +660,7 @@ pattern = r"<img.*?src=\"(.*?)\".*?>"
 new_content = re.sub(pattern, f'<img src="{png_filename}">', content)
 pattern = r'<img.*?id="myImg" src="(.*?)">'
 new_content = re.sub(pattern, r'<img id="myImg" src="' + png_filename + r'">', content)
-with open("index.html", 'w', encodeing='UTF-8') as f:
+with open("index.html", 'w') as f:
     f.write(new_content)
 
 
@@ -754,8 +755,34 @@ for sheet_name, (prefix, count) in sheet_conditions.items():
 # 保存新的Excel文件
 writer.close()
 
+# 设置规则文件命名
+#current_time = time.strftime("%Y%m%d-%H%M%S")
+replace_rules_file = f'replace_rules-{current_time}.xlsx'
 
-with open('index.html', 'r', encodeing='UTF-8') as f:
+# 创建一个新的工作簿
+workbook = openpyxl.Workbook()
+sheet = workbook.active
+sheet.title = '替换规则'
+
+# 添加列标题
+sheet['A1'] = '模板名称'
+sheet['B1'] = '项目名称'
+
+# 自动生成leaf01到leaf20以及spine01到spine10
+for i in range(1, leafs + 1):
+    sheet[f'A{i+1}'] = f'leaf{i:02d}'
+
+for i in range(1, spines + 1):
+    sheet[f'A{i+ leafs + 1}'] = f'spine{i:02d}'
+
+# 添加server01到serverN
+for i in range(1, gpu_server_num + 1):
+    sheet[f'A{i+ leafs + spines + 1}'] = f'server{i:02d}'
+
+# 保存工作簿
+workbook.save(replace_rules_file)
+
+with open('index.html', 'r') as f:
     content = f.read()
     lines = content.splitlines()
     del lines[122:]
@@ -777,7 +804,7 @@ with open('index.html', 'r', encodeing='UTF-8') as f:
     lines.append('        </table>')
     lines.append('    </div>')
     lines.append('    <script src="script.js"></script>')
-    html_line = f'<footer><p>Copyright © 2024 Vincent@nvlink.vip <a href="{excel_filename}">Mapping1</a> <a href="{excel_filename2}">Mapping2</a></p></footer>'
+    html_line = f'<footer><p>Copyright © 2024 Vincent@nvlink.vip <a href="{excel_filename}">pm</a><a href="modified_{excel_filename}">Mpm</a> <a href="{excel_filename2}">dm</a><a href="modified_{excel_filename2}">Mdm</a></p></footer>'
     lines.append(html_line)
     #lines.append('    <footer><p>Copyright &copy; 2024 Vincent&commat;nvlink.vip <a href="{excel_filename}">Port_Mapping</a></p></footer> ')
     lines.append('    </body>') 
