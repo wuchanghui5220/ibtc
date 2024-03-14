@@ -654,7 +654,7 @@ if speed == "NDR":
     print(f"Switch optical transceiver: {Spine2Leaf_OT_number} + {Leaf2Server_OT_number} = {Switch_OT}")
     print("HCA optical transceiver: " + str(Hca_OT))
 
-with open("index.html") as f:
+with open("index.html", encoding='utf-8') as f:
     content = f.read()
 pattern = r"<img.*?src=\"(.*?)\".*?>"
 new_content = re.sub(pattern, f'<img src="{png_filename}">', content)
