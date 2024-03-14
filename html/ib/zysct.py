@@ -60,7 +60,7 @@ def add_logo(ax, ports, leafs):
     ax.add_artist(ab)
 
 def replace_line(file, line_no, new_text):
-    with open(file) as f:
+    with open(file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
         del lines[line_no - 1]    
         lines.insert(line_no - 1, str(new_text) + '\n')
