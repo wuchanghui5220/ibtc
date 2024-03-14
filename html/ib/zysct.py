@@ -660,7 +660,7 @@ pattern = r"<img.*?src=\"(.*?)\".*?>"
 new_content = re.sub(pattern, f'<img src="{png_filename}">', content)
 pattern = r'<img.*?id="myImg" src="(.*?)">'
 new_content = re.sub(pattern, r'<img id="myImg" src="' + png_filename + r'">', content)
-with open("index.html", 'w') as f:
+with open("index.html", 'w', encoding='utf-8') as f:
     f.write(new_content)
 
 
@@ -782,7 +782,7 @@ for i in range(1, gpu_server_num + 1):
 # 保存工作簿
 workbook.save(replace_rules_file)
 
-with open('index.html', 'r') as f:
+with open('index.html', 'r', encoding='utf-8') as f:
     content = f.read()
     lines = content.splitlines()
     del lines[122:]
@@ -810,5 +810,5 @@ with open('index.html', 'r') as f:
     lines.append('</html>')
 
     content = "\n".join(lines)
-with open('index.html', 'w') as f:
+with open('index.html', 'w', encoding='utf-8') as f:
     f.write(content)
