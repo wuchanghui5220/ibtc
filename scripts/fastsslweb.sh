@@ -86,7 +86,7 @@ source ~/.bashrc
 
 # generate certificate
 echo "generate certificate"
-acme.sh --issue -d "$website" -d --webroot "$html_dir"
+acme.sh --issue -d "$website" --webroot "$html_dir"
 
 # install certificate
 echo "install certificate"
