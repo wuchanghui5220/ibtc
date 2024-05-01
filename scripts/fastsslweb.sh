@@ -25,7 +25,7 @@ fi
 
 user="admin"
 user_home="/home/$user"
-html_dir="$user_home/html"
+html_dir="$user_home/ibtc/html"
 mail="wuchanghui5220@gmail.com"
 website="nvlink.vip"
 
@@ -144,23 +144,6 @@ else
   echo "Nginx container already exists"  
 fi
 
-# Initial HTML root directory
-echo "Copying files to $html_dir"
-echo "# cp favicon.ico index.html $html_dir"
-cp ./web_file/* $html_dir
 
-# Copying Python files to $user_home
-python_files="fw_link_data.py fwlink.py ibtc2.py ofed.py"
-logo_pics="zy_elite.png"
-echo "# cp $python_files $logo_pics $user_home"
-cp $python_files $logo_pics $user_home
-echo "Set Python file  permissions"
-echo "# chown -R $user:$user $user_home"
-chown -R $user:$user $user_home
-echo "# chmod +x $user_home/*.py"
-chmod +x $user_home/*.py
-echo ""
-echo "# ls -lh $user_home"
-ls -lh $user_home
 echo ""
 echo "Done! Enjoy!"
