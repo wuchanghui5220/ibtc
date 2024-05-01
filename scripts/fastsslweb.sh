@@ -10,6 +10,9 @@ else
     echo "Git is already installed"
 fi
 
+# install cron
+yes | sudo apt-get install cron
+
 # install docker
 if ! command -v docker &> /dev/null; then
   echo "Docker is not installed, installing now..."
