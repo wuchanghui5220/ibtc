@@ -6,7 +6,7 @@ alias acme.sh=~/.acme.sh/acme.sh
 
 source ~/.bashrc
 
-acme.sh --issue -d nvlink.vip -d --webroot /home/admin/ibtc/html/
+acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html/
 
 acme.sh --install-cert -d nvlink.vip \
 --key-file       /home/admin/ibtc/html/certs/key.pem  \
