@@ -20,13 +20,15 @@ sudo docker run \
     hwdsl2/ipsec-vpn-server
 
 echo "Waiting IPsec VPN running"
-sleep 5
+sleep 15
 # 将客户端配置文件从容器复制到主机 /home/admin 目录
 sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig "$HOME"
 sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan "$HOME"
 sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.p12 "$HOME"
+sleep 1
 
 # 修改客户端配置文件属性
+echo chown "$USER:$USER" "$HOME"/vpnclient.*
 sudo chown "$USER:$USER" "$HOME"/vpnclient.*
 
 
@@ -67,9 +69,9 @@ echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
 # source ~/.bashrc
 sleep 3
-~/.acme.sh/acme.sh --issue -d nvlink.vip --webroot "$HOME"/ibtc/html
+"$HOME"/.acme.sh/acme.sh --issue -d nvlink.vip --webroot "$HOME"/ibtc/html
 sleep 3
-acme.sh --install-cert -d nvlink.vip \
+"$HOME"/.acme.sh/acme.sh --install-cert -d nvlink.vip \
     --key-file "$HOME"/ibtc/html/certs/key.pem \
     --fullchain-file "$HOME"/ibtc/html/certs/cert.pem
 
