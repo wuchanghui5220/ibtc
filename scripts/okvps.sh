@@ -42,6 +42,9 @@ pip3 install --user networkx matplotlib  playwright tqdm pyarrow pandas openpyxl
 
 # 克隆GitHub仓库
 git clone https://github.com/wuchanghui5220/ibtc.git
+sleep 3
+sudo chmod +x /home/admin/ibtc/html/ib/zysct.py
+
 
 # 拉取并运行Nginx Docker容器
 sudo docker pull nginx
