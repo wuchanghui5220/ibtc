@@ -22,12 +22,12 @@ sudo docker run \
 echo "Waiting IPsec VPN running"
 sleep 5
 # 将客户端配置文件从容器复制到主机 /home/admin 目录
-sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig /home/admin
-sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan /home/admin
-sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.p12 /home/admin
+sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig "$HOME"
+sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan "$HOME"
+sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.p12 "$HOME"
 
 # 修改客户端配置文件属性
-sudo chown admin:admin /home/admin/vpnclient.*
+sudo chown "$USER:$USER" "$HOME"/vpnclient.*
 
 
 # 安装Python3和pip
@@ -46,7 +46,7 @@ playwright install
 # 克隆GitHub仓库
 git clone https://github.com/wuchanghui5220/ibtc.git
 sleep 3
-sudo chmod +x /home/admin/ibtc/html/ib/zysct.py
+sudo chmod +x "$HOME"/ibtc/html/ib/zysct.py
 
 
 # 拉取并运行Nginx Docker容器
@@ -56,7 +56,7 @@ sudo docker run -d \
     --name nginx \
     --restart=always \
     -p 80:80 \
-    -v /home/admin/ibtc/html:/usr/share/nginx/html \
+    -v "$HOME"/ibtc/html:/usr/share/nginx/html \
     nginx
 echo "Waiting nginx running"
 sleep 5
@@ -67,11 +67,11 @@ echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
 # source ~/.bashrc
 sleep 3
-~/.acme.sh/acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html
+~/.acme.sh/acme.sh --issue -d nvlink.vip --webroot "$HOME"/ibtc/html
 sleep 3
 acme.sh --install-cert -d nvlink.vip \
-    --key-file /home/admin/ibtc/html/certs/key.pem \
-    --fullchain-file /home/admin/ibtc/html/certs/cert.pem
+    --key-file "$HOME"/ibtc/html/certs/key.pem \
+    --fullchain-file "$HOME"/ibtc/html/certs/cert.pem
 
 # 配置并重新启动Nginx容器
 echo "sudo docker stop nginx"
@@ -88,9 +88,9 @@ sudo docker run -d \
     --restart=always \
     -p 80:80 \
     -p 443:443 \
-    -v /home/admin/ibtc/html/nginx.conf:/etc/nginx/conf.d/default.conf \
-    -v /home/admin/ibtc/html/certs:/etc/nginx/certs \
-    -v /home/admin/ibtc/html:/usr/share/nginx/html \
+    -v "$HOME"/ibtc/html/nginx.conf:/etc/nginx/conf.d/default.conf \
+    -v "$HOME"/ibtc/html/certs:/etc/nginx/certs \
+    -v "$HOME"/ibtc/html:/usr/share/nginx/html \
     nginx
 
 echo "Waiting nginx reloading"
