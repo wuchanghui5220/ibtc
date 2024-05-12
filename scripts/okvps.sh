@@ -68,9 +68,12 @@ acme.sh --install-cert -d nvlink.vip \
 
 # 配置并重新启动Nginx容器
 sudo docker stop nginx
+echo "sudo docker stop nginx"
 sleep 3
 sudo docker rm nginx
+echo "sudo docker rm nginx"
 sleep 3
+echo "reload nginx"
 sudo docker run -d \
     --name nginx \
     --restart=always \
@@ -81,5 +84,8 @@ sudo docker run -d \
     -v /home/admin/ibtc/html:/usr/share/nginx/html \
     nginx
 
+echo "Waiting nginx running"
 sleep 3
+
+echo "docker ps -a"
 sudo docker ps -a
