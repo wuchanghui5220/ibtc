@@ -63,6 +63,8 @@ sudo docker run -d \
     nginx
 echo "Waiting nginx running"
 sleep 10
+echo "sudo docker ps -a"
+sudo docker ps -a
 
 # 安装和配置SSL证书
 curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
