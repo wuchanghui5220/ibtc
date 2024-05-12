@@ -47,7 +47,7 @@ sudo docker run -d \
 --restart=always \
 -p 80:80 \
 -p 443:443 \
--v /home/admin/ibtc/nginx_conf/nginx.conf:/etc/nginx/conf.d/default.conf \
+-v /home/admin/ibtc/html/nginx.conf:/etc/nginx/conf.d/default.conf \
 -v /home/admin/ibtc/html/certs:/etc/nginx/certs \
 -v /home/admin/ibtc/html:/usr/share/nginx/html \
 nginx
