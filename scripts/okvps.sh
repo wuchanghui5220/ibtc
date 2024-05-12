@@ -33,17 +33,18 @@ sudo chown "$USER:$USER" "$HOME"/vpnclient.*
 
 
 # 安装Python3和pip
-sudo apt-get install -y python3-pip
+sudo apt install -y python3-pip nodejs npm libxss1 libatk-bridge2.0-0
 
-# 安装Playwright和相关依赖项
-sudo apt-get install -y nodejs npm
+# Install Playwright and its dependencies
 sudo npm install -g playwright
 sudo npx playwright install-deps
-playwright install
 
-# 安装networkx和matplotlib
-pip3 install --user networkx matplotlib  playwright tqdm pyarrow pandas openpyxl --break-system-packages
-playwright install 
+# Install Python packages
+python3 -m pip install --break-system-packages playwright tqdm
+python3 -m pip install --user networkx matplotlib
+
+# Install Playwright for the current user
+playwright install
 
 # 克隆GitHub仓库
 git clone https://github.com/wuchanghui5220/ibtc.git
@@ -61,7 +62,7 @@ sudo docker run -d \
     -v "$HOME"/ibtc/html:/usr/share/nginx/html \
     nginx
 echo "Waiting nginx running"
-sleep 5
+sleep 10
 
 # 安装和配置SSL证书
 curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
