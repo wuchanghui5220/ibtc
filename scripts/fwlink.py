@@ -117,7 +117,7 @@ with sync_playwright() as p:
         texts.append(text)
         elements5.append((text, el))
     # 打印download 表格信息
-    folder = "html/" + model
+    folder = "../html/" + model
     ret = subprocess.run(['mkdir', '-p', folder])
     # os.makedirs(folder, exist_ok=True)
 
@@ -126,7 +126,7 @@ with sync_playwright() as p:
         f.write("\n".join(texts))
     file_name_zip = ""
     a_link = "https://content.mellanox.com/firmware/"
-    e_link = ".zip"
+    e_link = ".bin.zip"
     with open(info) as f:
         for line in f:
             if "fw-" in line:
@@ -139,7 +139,7 @@ with sync_playwright() as p:
     print(file_name_zip)
     browser.close()
     
-    with open(f"html/{model}/index.html", 'w') as f:
+    with open(f"../html/{model}/index.html", 'w') as f:
         f.write(file_name_zip)
         f.write("\n")
     ret = subprocess.run(['rm', info])
