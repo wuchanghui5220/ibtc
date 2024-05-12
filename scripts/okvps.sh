@@ -45,17 +45,22 @@ git clone https://github.com/wuchanghui5220/ibtc.git
 
 # 拉取并运行Nginx Docker容器
 sudo docker pull nginx
+sleep 3
 sudo docker run -d \
     --name nginx \
     --restart=always \
     -p 80:80 \
     -v /home/admin/ibtc/html:/usr/share/nginx/html \
     nginx
+echo "Waiting nginx running"
+sleep 5
 
 # 安装和配置SSL证书
 curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
 echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
+sleep 3
 source ~/.bashrc
+sleep 1
 acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html/
 acme.sh --install-cert -d nvlink.vip \
     --key-file /home/admin/ibtc/html/certs/key.pem \
@@ -63,7 +68,9 @@ acme.sh --install-cert -d nvlink.vip \
 
 # 配置并重新启动Nginx容器
 sudo docker stop nginx
+sleep 3
 sudo docker rm nginx
+sleep 3
 sudo docker run -d \
     --name nginx \
     --restart=always \
@@ -73,3 +80,6 @@ sudo docker run -d \
     -v /home/admin/ibtc/html/certs:/etc/nginx/certs \
     -v /home/admin/ibtc/html:/usr/share/nginx/html \
     nginx
+
+sleep 3
+sudo docker ps -a
