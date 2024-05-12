@@ -41,6 +41,7 @@ playwright install
 
 # 安装networkx和matplotlib
 pip3 install --user networkx matplotlib  playwright tqdm pyarrow pandas openpyxl --break-system-packages
+playwright install 
 
 # 克隆GitHub仓库
 git clone https://github.com/wuchanghui5220/ibtc.git
