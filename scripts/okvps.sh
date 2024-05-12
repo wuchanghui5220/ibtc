@@ -67,7 +67,7 @@ echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
 source ~/.bashrc
 sleep 3
-acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html/
+~/.acme.sh/acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html/
 sleep 3
 acme.sh --install-cert -d nvlink.vip \
     --key-file /home/admin/ibtc/html/certs/key.pem \
