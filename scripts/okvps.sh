@@ -19,6 +19,15 @@ sudo docker run \
     -d --privileged \
     hwdsl2/ipsec-vpn-server
 
+# 将客户端配置文件从容器复制到主机 /home/admin 目录
+sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig /home/admin
+sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan /home/admin
+sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.p12 /home/admin
+
+# 修改客户端配置文件属性
+sudo chown admin:admin /home/admin/vpnclient.*
+
+
 # 安装Python3和pip
 sudo apt-get install -y python3-pip
 
@@ -29,7 +38,7 @@ sudo npx playwright install-deps
 playwright install
 
 # 安装networkx和matplotlib
-pip3 install --user networkx matplotlib
+pip3 install --user networkx matplotlib  playwright tqdm pyarrow pandas openpyxl --break-system-packages
 
 # 克隆GitHub仓库
 git clone https://github.com/wuchanghui5220/ibtc.git
