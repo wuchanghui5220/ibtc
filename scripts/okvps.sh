@@ -65,9 +65,9 @@ sleep 5
 curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
 echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
-source ~/.bashrc
+# source ~/.bashrc
 sleep 3
-~/.acme.sh/acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html/
+~/.acme.sh/acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html
 sleep 3
 acme.sh --install-cert -d nvlink.vip \
     --key-file /home/admin/ibtc/html/certs/key.pem \
