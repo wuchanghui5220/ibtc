@@ -19,6 +19,8 @@ sudo docker run \
     -d --privileged \
     hwdsl2/ipsec-vpn-server
 
+echo "Waiting IPsec VPN running"
+sleep 5
 # 将客户端配置文件从容器复制到主机 /home/admin 目录
 sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.mobileconfig /home/admin
 sudo docker cp ipsec-vpn-server:/etc/ipsec.d/vpnclient.sswan /home/admin
@@ -63,19 +65,22 @@ curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
 echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
 source ~/.bashrc
-sleep 1
+sleep 3
 acme.sh --issue -d nvlink.vip --webroot /home/admin/ibtc/html/
+sleep 3
 acme.sh --install-cert -d nvlink.vip \
     --key-file /home/admin/ibtc/html/certs/key.pem \
     --fullchain-file /home/admin/ibtc/html/certs/cert.pem
 
 # 配置并重新启动Nginx容器
-sudo docker stop nginx
 echo "sudo docker stop nginx"
+sudo docker stop nginx
 sleep 3
-sudo docker rm nginx
+
 echo "sudo docker rm nginx"
+sudo docker rm nginx
 sleep 3
+
 echo "reload nginx"
 sudo docker run -d \
     --name nginx \
@@ -87,7 +92,7 @@ sudo docker run -d \
     -v /home/admin/ibtc/html:/usr/share/nginx/html \
     nginx
 
-echo "Waiting nginx running"
+echo "Waiting nginx reloading"
 sleep 3
 
 echo "docker ps -a"
