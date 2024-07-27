@@ -70,7 +70,7 @@ sudo docker ps -a
 curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
 echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
-# source ~/.bashrc
+source ~/.bashrc
 sleep 3
 "$HOME"/.acme.sh/acme.sh --issue -d nvlink.vip --webroot "$HOME"/ibtc/html
 sleep 3
