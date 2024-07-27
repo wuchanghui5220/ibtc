@@ -67,7 +67,9 @@ echo "sudo docker ps -a"
 sudo docker ps -a
 
 # 安装和配置SSL证书
+echo "Installing and configuration SSL cert"
 curl https://get.acme.sh | sh -s email=wuchanghui5220@gmail.com
+sleep 2
 echo "alias acme.sh=~/.acme.sh/acme.sh" >> ~/.bashrc
 sleep 3
 source ~/.bashrc
