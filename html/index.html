@@ -39,7 +39,7 @@
     margin-bottom: 5px;
     font-size: 0.9em;
   }
-  input, select {
+  input, select, textarea {
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
@@ -175,8 +175,8 @@
         <div class="input-col">
           <label for="switchType">Switch Type:</label>
           <select id="switchType" onchange="updateNetworkCardOptions()">
-            <option value="QM8700">QM8700 (40-port)</option>
-            <option value="QM9700" selected>QM9700 (64-port)</option>
+            <option value="QM8790">QM8790 (40-port)</option>
+            <option value="QM9790" selected>QM9790 (64-port)</option>
             <option value="Q3400">Q3400 (144-port)</option>
           </select>
         </div>
@@ -193,7 +193,7 @@
       <div class="input-row">
         <div class="input-col">
           <label for="numServers">Number of Servers:</label>
-          <input type="number" id="numServers" min="1" value="64">
+          <input type="number" id="numServers" min="1" value="63">
         </div>
         <div class="input-col">
           <label for="numNetworkCardsPerServer">Network Cards per Server:</label>
@@ -255,6 +255,31 @@
         </div>
       </div>
       
+      <div class="input-row">
+        <div class="input-col">
+          <label for="managementNodes">Management Node Names (one per line):</label>
+          <textarea id="managementNodes" rows="2">UFM-01
+UFM-02</textarea>
+        </div>
+        <div class="input-col">
+          <label for="managementNodeNics">Management Node Network Cards:</label>
+          <select id="managementNodeNics">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="input-row">
+        <div class="input-col">
+          <label for="managementNodeConnection">Management Node Connection:</label>
+          <select id="managementNodeConnection">
+            <option value="spine">Spine</option>
+            <option value="leaf" selected>Leaf</option>
+          </select>
+        </div>
+      </div>
+      
       <button onclick="calculateAndDraw()">Calculate and Generate Diagram</button>
     </div>
   </div>
@@ -276,10 +301,10 @@ function updateNetworkCardOptions() {
   const networkCardSelect = document.getElementById('networkCardType');
   
   switch(switchType) {
-    case 'QM8700':
+    case 'QM8790':
       networkCardSelect.value = '200G';
       break;
-    case 'QM9700':
+    case 'QM9790':
       networkCardSelect.value = '400G';
       break;
     case 'Q3400':
@@ -303,17 +328,20 @@ function calculateAndDraw() {
   const logoScale = parseFloat(document.getElementById('logoScale').value);
   const showLogo = document.getElementById('showLogo').checked;
   const logoCenterDistance = 50; // Fixed value, not shown in UI
+  const managementNodes = document.getElementById('managementNodes').value.split('\n').filter(node => node.trim() !== '');
+  const managementNodeNics = parseInt(document.getElementById('managementNodeNics').value);
+  const managementNodeConnection = document.getElementById('managementNodeConnection').value;
 
   let switchPorts, leafUplinks, serversPerSU, possibleSpineCounts;
 
   switch(switchType) {
-    case 'QM8700':
+    case 'QM8790':
       switchPorts = 40;
       leafUplinks = 20;
       serversPerSU = 20;
       possibleSpineCounts = [1, 2, 4, 5, 10, 20];
       break;
-    case 'QM9700':
+    case 'QM9790':
       switchPorts = 64;
       leafUplinks = 32;
       serversPerSU = 32;
@@ -332,8 +360,9 @@ function calculateAndDraw() {
   const numLeafSwitches = numSU * numLeafSwitchesPerSU;
   const numSpineSwitches = possibleSpineCounts.find(count => count >= numLeafSwitches * leafUplinks / switchPorts);
   const totalPorts = numLeafSwitches * switchPorts + numSpineSwitches * switchPorts;
-  const totalCables = numServers * numNetworkCardsPerServer + numLeafSwitches * numSpineSwitches;
   const cablesPerLineLeafToSpine = Math.floor(leafUplinks / numSpineSwitches);
+  const totalCables = numServers * numNetworkCardsPerServer + numLeafSwitches * numSpineSwitches *cablesPerLineLeafToSpine + managementNodes.length * managementNodeNics;
+  
   const cablesPerLineLeafToNode = 1;
 
   const results = `
@@ -350,14 +379,17 @@ function calculateAndDraw() {
       <li>Leaf to Spine: ${cablesPerLineLeafToSpine}</li>
       <li>Leaf to Node: ${cablesPerLineLeafToNode}</li>
     </ul>
+    <p><strong>Management Nodes:</strong> ${managementNodes.join(', ')}</p>
+    <p><strong>Management Node NICs:</strong> ${managementNodeNics}</p>
+    <p><strong>Management Node Connection:</strong> ${managementNodeConnection}</p>
   `;
   
   document.getElementById('results').innerHTML = results;
   
-  drawTopology(numSU, numSpineSwitches, numLeafSwitches, numServers, numNetworkCardsPerServer, serversPerSU, spineLeafDistance, leafNodeDistance, serversPerRow, diagramHeight, nodeRowSpacing, logoScale, logoCenterDistance, showLogo);
+  drawTopology(numSU, numSpineSwitches, numLeafSwitches, numServers, numNetworkCardsPerServer, serversPerSU, spineLeafDistance, leafNodeDistance, serversPerRow, diagramHeight, nodeRowSpacing, logoScale, logoCenterDistance, showLogo, managementNodes, managementNodeNics, managementNodeConnection);
 }
 
-function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerServer, serversPerSU, spineLeafDistance, leafNodeDistance, serversPerRow, diagramHeight, nodeRowSpacing, logoScale, logoCenterDistance, showLogo) {
+function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerServer, serversPerSU, spineLeafDistance, leafNodeDistance, serversPerRow, diagramHeight, nodeRowSpacing, logoScale, logoCenterDistance, showLogo, managementNodes, managementNodeNics, managementNodeConnection) {
   const minWidth = Math.min(window.innerWidth - 40, 1200);
   const width = Math.max(minWidth, numLeaf * 80);
   const height = diagramHeight;
@@ -421,13 +453,18 @@ function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerSe
     .attr("fill", "white")
     .text((d, i) => `Leaf ${i + 1}`);
   
+  // Create curved connections between spine and leaf switches
   for (let l = 0; l < numLeaf; l++) {
     for (let s = 0; s < numSpine; s++) {
-      connectionsGroup.append("line")
-        .attr("x1", spineX(s))
-        .attr("y1", spineY + 30)
-        .attr("x2", leafX(l))
-        .attr("y2", leafY)
+      const startX = spineX(s);
+      const startY = spineY + 30;
+      const endX = leafX(l);
+      const endY = leafY;
+      const midY = (startY + endY) / 2;
+
+      connectionsGroup.append("path")
+        .attr("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
+        .attr("fill", "none")
         .attr("stroke", "#34495e")
         .attr("stroke-width", 0.5);
     }
@@ -468,18 +505,77 @@ function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerSe
         .attr("fill", "white")
         .text(`Node ${su * serversPerSU + s + 1}`);
       
+      // Create curved connections between leaf switches and servers
       for (let nc = 0; nc < numNetworkCardsPerServer; nc++) {
         const targetLeaf = su * numNetworkCardsPerServer + nc;
-        connectionsGroup.append("line")
-          .attr("x1", x)
-          .attr("y1", y - serverHeight / 2)
-          .attr("x2", leafX(targetLeaf))
-          .attr("y2", leafY + 30)
+        const startX = leafX(targetLeaf);
+        const startY = leafY + 30;
+        const endX = x;
+        const endY = y - serverHeight / 2;
+        const midY = (startY + endY) / 2;
+
+        connectionsGroup.append("path")
+          .attr("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
+          .attr("fill", "none")
           .attr("stroke", "#bdc3c7")
           .attr("stroke-width", 0.5);
       }
     }
   }
+  
+  // Add management nodes
+  const managementNodeWidth = 70;
+  const managementNodeHeight = 30;
+  const managementNodeY = lastNodeY + nodeRowSpacing;
+  
+  // Calculate the number of connections needed
+  const totalConnections = managementNodes.length * managementNodeNics;
+  const targetSwitches = managementNodeConnection === 'spine' ? numSpine : numLeaf;
+  const switchesToConnect = Math.min(totalConnections, targetSwitches);
+  
+  managementNodes.forEach((nodeName, index) => {
+    const x = (width / (managementNodes.length + 1)) * (index + 1);
+    
+    nodesGroup.append("rect")
+      .attr("x", x - managementNodeWidth / 2)
+      .attr("y", managementNodeY - managementNodeHeight / 2)
+      .attr("width", managementNodeWidth)
+      .attr("height", managementNodeHeight)
+      .attr("rx", 5)
+      .attr("ry", 5)
+      .attr("fill", "#e74c3c");
+    
+    nodesGroup.append("text")
+      .attr("x", x)
+      .attr("y", managementNodeY)
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", "10px")
+      .attr("fill", "white")
+      .text(nodeName);
+    
+    // Create connections for management nodes
+    for (let nic = 0; nic < managementNodeNics; nic++) {
+      let targetSwitch;
+      if (managementNodeConnection === 'spine') {
+        targetSwitch = spineX(numSpine - switchesToConnect + index * managementNodeNics + nic);
+      } else {
+        targetSwitch = leafX(numLeaf - switchesToConnect + index * managementNodeNics + nic);
+      }
+      
+      const startX = x;
+      const startY = managementNodeY - managementNodeHeight / 2;
+      const endX = targetSwitch;
+      const endY = managementNodeConnection === 'spine' ? spineY + 30 : leafY + 30;
+      const midY = (startY + endY) / 2;
+
+      connectionsGroup.append("path")
+        .attr("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
+        .attr("fill", "none")
+        .attr("stroke", "#e74c3c")
+        .attr("stroke-width", 1);
+    }
+  });
   
   nodesGroup.append("text")
     .attr("x", width / 2)
@@ -511,7 +607,7 @@ function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerSe
       .attr("x", suWidth * su)
       .attr("y", 10)
       .attr("width", suWidth)
-      .attr("height", lastNodeY + serverHeight / 2 + 30)
+      .attr("height", managementNodeY + managementNodeHeight / 2 + 30)
       .attr("fill", "none")
       .attr("stroke", "#95a5a6")
       .attr("stroke-width", 2)
@@ -519,7 +615,7 @@ function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerSe
     
     nodesGroup.append("text")
       .attr("x", suWidth * (su + 0.5))
-      .attr("y", lastNodeY + serverHeight / 2 + 25)
+      .attr("y", managementNodeY + managementNodeHeight / 2 + 25)
       .attr("text-anchor", "middle")
       .attr("font-size", "14px")
       .attr("font-weight", "bold")
