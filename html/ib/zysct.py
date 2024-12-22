@@ -782,6 +782,108 @@ for i in range(1, gpu_server_num + 1):
 # 保存工作簿
 workbook.save(replace_rules_file)
 
+def export_product_table(data, products, current_time):
+    """
+    Export the product table data to an Excel file with matching web styling.
+    """
+    import pandas as pd
+    from openpyxl import Workbook
+    from openpyxl.styles import PatternFill, Border, Side, Alignment, Font
+    from openpyxl.utils import get_column_letter
+    
+    # Create lists to store the table data
+    table_data = []
+    
+    # Process the data
+    for item in data:
+        model = item['model']
+        qty = item['num']
+        note = item['note']
+        for product in products:
+            if product['model'] == model:
+                table_data.append({
+                    '产品名称': product['name'],
+                    '产品型号': product['model'],
+                    '产品描述': product['desc'],
+                    '数量': qty,
+                    '备注': note
+                })
+    
+    # Generate filename
+    table_filename = f'product_table_{current_time}.xlsx'
+    
+    # Create DataFrame and save to Excel
+    df = pd.DataFrame(table_data)
+    df.to_excel(table_filename, index=False, sheet_name='产品清单')
+    
+    # Load the workbook and select active sheet
+    wb = openpyxl.load_workbook(table_filename)
+    ws = wb.active
+    
+    # Define styles
+    header_fill = PatternFill(start_color='4CAF50', end_color='4CAF50', fill_type='solid')  # 绿色表头
+    border = Border(
+        left=Side(style='thin'),
+        right=Side(style='thin'),
+        top=Side(style='thin'),
+        bottom=Side(style='thin')
+    )
+    header_font = Font(bold=True, color='FFFFFF')  # 白色粗体字
+    cell_alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
+    
+    # Apply styles to header row
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.border = border
+        cell.font = header_font
+        cell.alignment = cell_alignment
+    
+    # Apply styles to data cells
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.border = border
+            cell.alignment = cell_alignment
+    
+    # Adjust column widths
+    column_widths = {
+        '产品名称': 15,
+        '产品型号': 15,
+        '产品描述': 90,
+        '数量': 10,
+        '备注': 25
+    }
+    
+    for idx, col in enumerate(ws.columns, 1):
+        column = get_column_letter(idx)
+        ws.column_dimensions[column].width = list(column_widths.values())[idx-1]
+    
+    # Set row height with auto adjustment for multiline text
+    ws.row_dimensions[1].height = 30  # 表头行高
+    
+    # Adjust row height based on content
+    for i in range(2, ws.max_row + 1):
+        max_length = 0
+        for cell in ws[i]:
+            if cell.column == 3:  # 产品描述列
+                # Calculate number of lines based on text length and column width
+                text = str(cell.value)
+                char_per_line = column_widths['产品描述'] // 2  # Approximate characters per line for Chinese
+                lines = len(text) / char_per_line
+                if lines > 1:
+                    # Set height based on number of lines (20 points per line)
+                    ws.row_dimensions[i].height = max(30, min(15 * lines, 90))  # Minimum 30, maximum 100
+                else:
+                    ws.row_dimensions[i].height = 60
+    
+    # Save the styled workbook
+    wb.save(table_filename)
+    
+    return table_filename
+
+# Add this code to the main script section where it processes the final HTML:
+current_time = time.strftime("%Y%m%d-%H%M%S")
+table_filename = export_product_table(data, products, current_time)
+
 with open('index.html', 'r', encoding='utf-8') as f:
     content = f.read()
     lines = content.splitlines()
@@ -800,13 +902,14 @@ with open('index.html', 'r', encoding='utf-8') as f:
                 lines.append('<td>{}</td>'.format(qty))
                 lines.append('<td>{}</td>'.format(note))
                 lines.append('</tr>')
-    # 重新追加结尾标签
+    # Append closing tags
     lines.append('        </table>')
     lines.append('    </div>')
     lines.append('    <script src="script.js"></script>')
-    html_line = f'<footer><p>Copyright © 2024 Vincent@nvlink.vip <a href="{excel_filename}">pm</a><a href="modified_{excel_filename}">Mpm</a> <a href="{excel_filename2}">dm</a><a href="modified_{excel_filename2}">Mdm</a></p></footer>'
+    # Add all file download links
+    html_line = f'<footer><p>Copyright © 2024 Vincent@nvlink.vip <a href="{excel_filename}">pm</a><a href="modified_{excel_filename}">Mpm</a> <a href="{excel_filename2}">dm</a><a href="modified_{excel_filename2}">Mdm</a> <a href="{table_filename}">product_list</a></p></footer>'
     lines.append(html_line)
-    lines.append('    </body>') 
+    lines.append('    </body>')
     lines.append('</html>')
 
     content = "\n".join(lines)
