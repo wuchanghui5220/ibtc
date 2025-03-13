@@ -1,675 +1,364 @@
-<html><head><base href="https://nvlink.vip/">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Infiniband Fabric Spine-Leaf Network Calculator</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 10px;
-  }
-  h1, h2 {
-    color: #2c3e50;
-    font-size: 1.5em;
-  }
-  .container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .left-panel, .right-panel {
-    width: 100%;
-  }
-  .input-group {
-    margin-bottom: 15px;
-  }
-  .input-row {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .input-col {
-    width: 100%;
-  }
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 0.9em;
-  }
-  input, select, textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-  }
-  button {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1em;
-  }
-  button:hover {
-    background-color: #2980b9;
-  }
-  #results {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
-  #diagram {
-    margin-top: 20px;
-    width: 100%;
-    overflow-x: auto;
-  }
-  svg {
-    width: 100%;
-    height: auto;
-    min-width: 300px;
-  }
-  .diagram-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .download-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  .download-btn {
-    flex: 1;
-    background-color: #27ae60;
-    font-size: 0.9em;
-  }
-  .download-btn:hover {
-    background-color: #2ecc71;
-  }
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-  }
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-  }
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-  }
-  input:checked + .slider {
-    background-color: #2196F3;
-  }
-  input:checked + .slider:before {
-    transform: translateX(26px);
-  }
-  
-  @media (min-width: 768px) {
-    body {
-      padding: 20px;
-    }
-    h1, h2 {
-      font-size: 2em;
-    }
-    .container {
-      flex-direction: row;
-    }
-    .left-panel, .right-panel {
-      width: 48%;
-    }
-    .input-row {
-      flex-direction: row;
-    }
-    .input-col {
-      width: 48%;
-    }
-    .download-buttons {
-      flex-direction: row;
-    }
-  }
-</style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vincent's Learning Vault</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --background-color: #f0f4f8;
+            --card-background: #ffffff;
+            --text-color: #333333;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(45deg, #4a90e2, #2c3e50);
+            color: white;
+            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner {
+            position: relative;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .banner h1 {
+            font-size: 2.5em;
+            text-align: center;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .tech-circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .tech-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            animation: float 10s infinite ease-in-out;
+        }
+        .tech-circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            left: 10%;
+            top: 20%;
+        }
+        .tech-circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            right: 20%;
+            bottom: 10%;
+            animation-delay: -5s;
+        }
+        .tech-circle:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            top: 50%;
+            animation-delay: -7s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-module {
+            opacity: 0;
+        }
+
+        .fade-module.show {
+            animation: fadeIn 1s ease-in forwards;
+        }
+        
+        header {
+            background: linear-gradient(45deg, #4a90e2, #2c3e50, #4a90e2, #2c3e50);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        .avatar {
+            position: absolute;
+            bottom: -30px;
+            left: 50px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 3;
+            transition: transform 0.3s ease;
+        }
+        .avatar:hover {
+            transform: scale(1.1);
+        }
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-content {
+            padding: 20px;
+        }
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        p {
+            margin-bottom: 0;
+        }
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 40px;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .footer-section {
+            flex: 1;
+            margin: 10px;
+            min-width: 200px;
+        }
+        .footer-section h3 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .footer-section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-section ul li a:hover {
+            color: var(--primary-color);
+        }
+        .social-icons {
+            font-size: 1.5em;
+        }
+        .social-icons a {
+            color: white;
+            margin-right: 10px;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .footer-content {
+                flex-direction: column;
+            }
+            .avatar {
+                left: 20px;
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Advanced Infiniband Fabric Spine-Leaf Network Calculator</h1>
-  
-  <div class="container">
-    <div class="left-panel">
-      <h2>Results</h2>
-      <div id="results">
-        <!-- Results will be populated here -->
-      </div>
-    </div>
-    
-    <div class="right-panel">
-      <h2>Configuration</h2>
-      <div class="input-row">
-        <div class="input-col">
-          <label for="switchType">Switch Type:</label>
-          <select id="switchType" onchange="updateNetworkCardOptions()">
-            <option value="QM8790">QM8790 (40-port)</option>
-            <option value="QM9790" selected>QM9790 (64-port)</option>
-            <option value="Q3400">Q3400 (144-port)</option>
-          </select>
+    <header>
+        <div class="banner">
+            <div class="tech-circles">
+                <div class="tech-circle"></div>
+                <div class="tech-circle"></div>
+                <div class="tech-circle"></div>
+            </div>
+            <h1>Vincent's Learning Vault</h1>
+            <img src="/images/avatar/avatar.jpg" alt="个人头像" class="avatar">
         </div>
-        <div class="input-col">
-          <label for="networkCardType">Network Card Type:</label>
-          <select id="networkCardType" disabled>
-            <option value="200G">200G</option>
-            <option value="400G" selected>400G</option>
-            <option value="800G">800G</option>
-          </select>
+    </header>
+
+    <main class="container">
+        <div class="content">
+            <div class="card fade-module">
+                <a href="https://docs.nvidia.com/networking/index.html" target="_blank" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <img src="/images/products.jpg" alt="经验分享" class="card-image">
+                    <div class="card-content">
+                        <h2>Networking Products</h2>
+                        <p>面向高性能、可扩展且安全的 AI 驱动数据中心的下一代网络</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+            <div class="card fade-module">
+                <a href="./solutions/" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <img src="/images/solutions.jpg" alt="产品归类" class="card-image">
+                    <div class="card-content">
+                        <h2>Solutions</h2>
+                        <p>人工智能,数据中心和云计算,设计与仿真,机器人和边缘计算,高性能计算,自动驾驶 </p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+            <div class="card fade-module">
+                <a href="https://docs.nvidia.com/networking/index.html" target="_blank" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <img src="/images/sources.png" alt="考试测试考题分享" class="card-image">
+                    <div class="card-content">
+                        <h2>Networking Docs</h2>
+                        <p>技术信息和产品文档</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+            <div class="card fade-module">
+                <a href="./tools/" target="_blank" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <img src="/images/topology_white.png" alt="笔记" class="card-image">
+                    <div class="card-content">
+                        <h2>工具</h2>
+                        <p>Infiniband 组网拓扑设计和规划，整体组网方案</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+            <div class="card fade-module">
+                <a href="/cb/" target="_blank" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <img src="/images/notewp.png" alt="工具脚本分享" class="card-image">
+                    <div class="card-content">
+                        <h2>配置计算器</h2>
+                        <p>快速简易配置标准组网，生成配置清单。</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+            <div class="card fade-module">
+                <a href="./pnp/" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <img src="/images/test.png" alt="笔记" class="card-image">
+                    <div class="card-content">
+                        <h2>NPN考试</h2>
+                        <p>为备考的小伙伴们准备的资源区。这里有各种考试的真题、模拟题和解析。</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
         </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="numServers">Number of Servers:</label>
-          <input type="number" id="numServers" min="1" value="63">
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Learning and Legacy</h3>
+                    <p>Learning is life's grand adventure; sharing is wisdom's living legacy.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速链接</h3>
+                    <ul>
+                        <li>	<a href="https://enterprise-support.nvidia.com/s/rma-serial-check" target="_blank">SSC&nbsp;&nbsp;</a> 
+				<a href="https://developer.nvidia.com/networking/infiniband-software" target="_blank">Driver&nbsp;&nbsp;</a> 
+                        	<a href="https://network.nvidia.com/support/firmware/firmware-downloads/" target="_blank">Firmware&nbsp;&nbsp;</a>
+                        	<a href="https://docs.nvidia.com/networking/display/nvidiamlnxosusermanualv3112300lts" target="_blank">UM&nbsp;&nbsp;</a>
+                        	<a href="https://docs.nvidia.com/networking/display/mftv4250/using+mlxconfig" target="_blank">MFT&nbsp;&nbsp;</a>
+                        	<a href="https://www.nvidia.com/en-us/networking/products/lts-releases/" target="_blank">LTS&nbsp;&nbsp;</a>
+                        	<a href="https://docs.nvidia.com/networking/display/nvidia-ufm-enterprise-user-manual-v6-17-1.1.pdf" target="_blank">UFM&nbsp;&nbsp;</a>
+				<a href="https://docs.nvidia.com/networking-ethernet-software/knowledge-base/Setup-and-Getting-Started/NVUE-Cheat-Sheet/" target="_blank">NVUE&nbsp;&nbsp;</a>
+				<a href="https://docs.nvidia.com/networking-ethernet-software/cumulus-linux-510/Quick-Start-Guide/" target="_blank">Cumulus&nbsp;&nbsp;</a>
+			</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我</h3>
+                    <ul>
+                        <li>	<a href="/">Email: vincentwu@zhengytech.com&nbsp;&nbsp;&nbsp;&nbsp;</a> 
+				<a href="https://nvid.nvidia.com/dashboard" target="_blank">Portal&nbsp;&nbsp;</a> 
+			</li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="input-col">
-          <label for="numNetworkCardsPerServer">Network Cards per Server:</label>
-          <input type="number" id="numNetworkCardsPerServer" min="1" max="8" value="8">
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="spineLeafDistance">Spine-Leaf Distance (px):</label>
-          <input type="number" id="spineLeafDistance" min="100" max="500" value="200">
-        </div>
-        <div class="input-col">
-          <label for="leafNodeDistance">Leaf-Node Distance (px):</label>
-          <input type="number" id="leafNodeDistance" min="100" max="500" value="200">
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="serversPerRow">Servers per Row:</label>
-          <select id="serversPerRow">
-            <option value="4">4</option>
-            <option value="8" selected>8</option>
-            <option value="10">10</option>
-            <option value="12">12</option>
-            <option value="16">16</option>
-            <option value="18">18</option>
-          </select>
-        </div>
-        <div class="input-col">
-          <label for="diagramHeight">Diagram Height (px):</label>
-          <input type="number" id="diagramHeight" min="600" max="2000" value="800">
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="nodeRowSpacing">Node Row Spacing (px):</label>
-          <input type="number" id="nodeRowSpacing" min="20" max="200" value="60">
-        </div>
-        <div class="input-col">
-          <label for="imageDPI">Image DPI:</label>
-          <input type="number" id="imageDPI" min="72" max="600" value="300">
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="logoScale">Logo Scale:</label>
-          <input type="number" id="logoScale" min="0.1" max="2" step="0.1" value="1">
-        </div>
-        <div class="input-col">
-          <label for="showLogo">Show Logo:</label>
-          <label class="switch">
-            <input type="checkbox" id="showLogo">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="managementNodes">Management Node Names (one per line):</label>
-          <textarea id="managementNodes" rows="2">UFM-01
-UFM-02</textarea>
-        </div>
-        <div class="input-col">
-          <label for="managementNodeNics">Management Node Network Cards:</label>
-          <select id="managementNodeNics">
-            <option value="1">1</option>
-            <option value="2" selected>2</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-col">
-          <label for="managementNodeConnection">Management Node Connection:</label>
-          <select id="managementNodeConnection">
-            <option value="spine">Spine</option>
-            <option value="leaf" selected>Leaf</option>
-          </select>
-        </div>
-      </div>
-      
-      <button onclick="calculateAndDraw()">Calculate and Generate Diagram</button>
-    </div>
-  </div>
-  
-  <div class="diagram-container">
-    <div id="diagram"></div>
-  </div>
-  
-  <div class="download-buttons">
-    <button class="download-btn" onclick="downloadPNG(false)">Download Topology as PNG (Transparent)</button>
-    <button class="download-btn" onclick="downloadPNG(true)">Download Topology as PNG (White Background)</button>
-  </div>
+    </footer>
 
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script>
-function updateNetworkCardOptions() {
-  const switchType = document.getElementById('switchType').value;
-  const networkCardSelect = document.getElementById('networkCardType');
-  
-  switch(switchType) {
-    case 'QM8790':
-      networkCardSelect.value = '200G';
-      break;
-    case 'QM9790':
-      networkCardSelect.value = '400G';
-      break;
-    case 'Q3400':
-      networkCardSelect.value = '800G';
-      break;
-  }
-  
-  calculateAndDraw();
-}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+              const modules = document.querySelectorAll('.fade-module');
+              
+              function showModules() {
+                modules.forEach((module, index) => {
+                  setTimeout(() => {
+                    module.classList.add('show');
+                  }, index * 300); // 每个模块之间延迟300毫秒
+                });
+              }
 
-function calculateAndDraw() {
-  const switchType = document.getElementById('switchType').value;
-  const networkCardType = document.getElementById('networkCardType').value;
-  const numServers = parseInt(document.getElementById('numServers').value);
-  const numNetworkCardsPerServer = parseInt(document.getElementById('numNetworkCardsPerServer').value);
-  const spineLeafDistance = parseInt(document.getElementById('spineLeafDistance').value);
-  const leafNodeDistance = parseInt(document.getElementById('leafNodeDistance').value);
-  const serversPerRow = parseInt(document.getElementById('serversPerRow').value);
-  const diagramHeight = parseInt(document.getElementById('diagramHeight').value);
-  const nodeRowSpacing = parseInt(document.getElementById('nodeRowSpacing').value);
-  const logoScale = parseFloat(document.getElementById('logoScale').value);
-  const showLogo = document.getElementById('showLogo').checked;
-  const logoCenterDistance = 50; // Fixed value, not shown in UI
-  const managementNodes = document.getElementById('managementNodes').value.split('\n').filter(node => node.trim() !== '');
-  const managementNodeNics = parseInt(document.getElementById('managementNodeNics').value);
-  const managementNodeConnection = document.getElementById('managementNodeConnection').value;
-
-  let switchPorts, leafUplinks, serversPerSU, possibleSpineCounts;
-
-  switch(switchType) {
-    case 'QM8790':
-      switchPorts = 40;
-      leafUplinks = 20;
-      serversPerSU = 20;
-      possibleSpineCounts = [1, 2, 4, 5, 10, 20];
-      break;
-    case 'QM9790':
-      switchPorts = 64;
-      leafUplinks = 32;
-      serversPerSU = 32;
-      possibleSpineCounts = [1, 2, 4, 8, 16, 32];
-      break;
-    case 'Q3400':
-      switchPorts = 144;
-      leafUplinks = 72;
-      serversPerSU = 72;
-      possibleSpineCounts = [1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72];
-      break;
-  }
-
-  const numSU = Math.ceil(numServers / serversPerSU);
-  const numLeafSwitchesPerSU = numNetworkCardsPerServer;
-  const numLeafSwitches = numSU * numLeafSwitchesPerSU;
-  const numSpineSwitches = possibleSpineCounts.find(count => count >= numLeafSwitches * leafUplinks / switchPorts);
-  const totalPorts = numLeafSwitches * switchPorts + numSpineSwitches * switchPorts;
-  const cablesPerLineLeafToSpine = Math.floor(leafUplinks / numSpineSwitches);
-  const totalCables = numServers * numNetworkCardsPerServer + numLeafSwitches * numSpineSwitches *cablesPerLineLeafToSpine + managementNodes.length * managementNodeNics;
-  
-  const cablesPerLineLeafToNode = 1;
-
-  const results = `
-    <p><strong>Switch Type:</strong> ${switchType}</p>
-    <p><strong>Network Card Type:</strong> ${networkCardType}</p>
-    <p><strong>Number of Scalable Units (SUs):</strong> ${numSU}</p>
-    <p><strong>Number of Spine Switches:</strong> ${numSpineSwitches}</p>
-    <p><strong>Number of Leaf Switches:</strong> ${numLeafSwitches}</p>
-    <p><strong>Total number of servers:</strong> ${numServers}</p>
-    <p><strong>Total number of switch ports:</strong> ${totalPorts}</p>
-    <p><strong>Total number of cables:</strong> ${totalCables}</p>
-    <p><strong>Cables per line in diagram:</strong></p>
-    <ul>
-      <li>Leaf to Spine: ${cablesPerLineLeafToSpine}</li>
-      <li>Leaf to Node: ${cablesPerLineLeafToNode}</li>
-    </ul>
-    <p><strong>Management Nodes:</strong> ${managementNodes.join(', ')}</p>
-    <p><strong>Management Node NICs:</strong> ${managementNodeNics}</p>
-    <p><strong>Management Node Connection:</strong> ${managementNodeConnection}</p>
-  `;
-  
-  document.getElementById('results').innerHTML = results;
-  
-  drawTopology(numSU, numSpineSwitches, numLeafSwitches, numServers, numNetworkCardsPerServer, serversPerSU, spineLeafDistance, leafNodeDistance, serversPerRow, diagramHeight, nodeRowSpacing, logoScale, logoCenterDistance, showLogo, managementNodes, managementNodeNics, managementNodeConnection);
-}
-
-function drawTopology(numSU, numSpine, numLeaf, numServers, numNetworkCardsPerServer, serversPerSU, spineLeafDistance, leafNodeDistance, serversPerRow, diagramHeight, nodeRowSpacing, logoScale, logoCenterDistance, showLogo, managementNodes, managementNodeNics, managementNodeConnection) {
-  const minWidth = Math.min(window.innerWidth - 40, 1200);
-  const width = Math.max(minWidth, numLeaf * 80);
-  const height = diagramHeight;
-  const spineY = 50;
-  const leafY = spineY + spineLeafDistance;
-  const serverY = leafY + leafNodeDistance;
-  
-  d3.select("#diagram").selectAll("*").remove();
-  const svg = d3.select("#diagram")
-    .append("svg")
-    .attr("viewBox", `0 0 ${width} ${height}`)
-    .attr("width", width)
-    .attr("height", height);
-
-  const connectionsGroup = svg.append("g").attr("class", "connections");
-  const nodesGroup = svg.append("g").attr("class", "nodes");
-  
-  const spineX = d => (width / (numSpine + 1)) * (d + 1);
-  nodesGroup.selectAll(".spine")
-    .data(d3.range(numSpine))
-    .join("rect")
-    .attr("class", "spine")
-    .attr("x", d => spineX(d) - 30)
-    .attr("y", spineY)
-    .attr("width", 60)
-    .attr("height", 30)
-    .attr("fill", "#3498db");
-  
-  nodesGroup.selectAll(".spine-label")
-    .data(d3.range(numSpine))
-    .join("text")
-    .attr("class", "spine-label")
-    .attr("x", spineX)
-    .attr("y", spineY + 15)
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "middle")
-    .attr("font-size", "10px")
-    .attr("fill", "white")
-    .text((d, i) => `Spine ${i + 1}`);
-  
-  const leafX = d => (width / (numLeaf + 1)) * (d + 1);
-  nodesGroup.selectAll(".leaf")
-    .data(d3.range(numLeaf))
-    .join("rect")
-    .attr("class", "leaf")
-    .attr("x", d => leafX(d) - 30)
-    .attr("y", leafY)
-    .attr("width", 60)
-    .attr("height", 30)
-    .attr("fill", "#3498db");
-  
-  nodesGroup.selectAll(".leaf-label")
-    .data(d3.range(numLeaf))
-    .join("text")
-    .attr("class", "leaf-label")
-    .attr("x", leafX)
-    .attr("y", leafY + 15)
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "middle")
-    .attr("font-size", "10px")
-    .attr("fill", "white")
-    .text((d, i) => `Leaf ${i + 1}`);
-  
-  // Create curved connections between spine and leaf switches
-  for (let l = 0; l < numLeaf; l++) {
-    for (let s = 0; s < numSpine; s++) {
-      const startX = spineX(s);
-      const startY = spineY + 30;
-      const endX = leafX(l);
-      const endY = leafY;
-      const midY = (startY + endY) / 2;
-
-      connectionsGroup.append("path")
-        .attr("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
-        .attr("fill", "none")
-        .attr("stroke", "#34495e")
-        .attr("stroke-width", 0.5);
-    }
-  }
-  
-  const serverWidth = 50;
-  const serverHeight = 20;
-  const serverSpacing = Math.min(60, width / (numSU * serversPerRow));
-  const totalRows = Math.ceil(numServers / serversPerRow);
-  const totalServerHeight = (totalRows - 1) * nodeRowSpacing;
-  const availableHeight = height - serverY - 60;
-  const verticalScale = Math.min(1, availableHeight / totalServerHeight);
-  
-  let lastNodeY = 0;
-  for (let su = 0; su < numSU; su++) {
-    for (let s = 0; s < Math.min(serversPerSU, numServers - su * serversPerSU); s++) {
-      const row = Math.floor(s / serversPerRow);
-      const col = s % serversPerRow;
-      const x = (width / numSU) * (su + 0.5) + (col - serversPerRow / 2 + 0.5) * serverSpacing;
-      const y = serverY + row * nodeRowSpacing * verticalScale;
-      lastNodeY = Math.max(lastNodeY, y);
-      
-      nodesGroup.append("rect")
-        .attr("x", x - serverWidth / 2)
-        .attr("y", y - serverHeight / 2)
-        .attr("width", serverWidth)
-        .attr("height", serverHeight)
-        .attr("rx", 5)
-        .attr("ry", 5)
-        .attr("fill", "#2ecc71");
-      
-      nodesGroup.append("text")
-        .attr("x", x)
-        .attr("y", y)
-        .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "middle")
-        .attr("font-size", "8px")
-        .attr("fill", "white")
-        .text(`Node ${su * serversPerSU + s + 1}`);
-      
-      // Create curved connections between leaf switches and servers
-      for (let nc = 0; nc < numNetworkCardsPerServer; nc++) {
-        const targetLeaf = su * numNetworkCardsPerServer + nc;
-        const startX = leafX(targetLeaf);
-        const startY = leafY + 30;
-        const endX = x;
-        const endY = y - serverHeight / 2;
-        const midY = (startY + endY) / 2;
-
-        connectionsGroup.append("path")
-          .attr("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
-          .attr("fill", "none")
-          .attr("stroke", "#bdc3c7")
-          .attr("stroke-width", 0.5);
-      }
-    }
-  }
-  
-  // Add management nodes
-  const managementNodeWidth = 70;
-  const managementNodeHeight = 30;
-  const managementNodeY = lastNodeY + nodeRowSpacing;
-  
-  // Calculate the number of connections needed
-  const totalConnections = managementNodes.length * managementNodeNics;
-  const targetSwitches = managementNodeConnection === 'spine' ? numSpine : numLeaf;
-  const switchesToConnect = Math.min(totalConnections, targetSwitches);
-  
-  managementNodes.forEach((nodeName, index) => {
-    const x = (width / (managementNodes.length + 1)) * (index + 1);
-    
-    nodesGroup.append("rect")
-      .attr("x", x - managementNodeWidth / 2)
-      .attr("y", managementNodeY - managementNodeHeight / 2)
-      .attr("width", managementNodeWidth)
-      .attr("height", managementNodeHeight)
-      .attr("rx", 5)
-      .attr("ry", 5)
-      .attr("fill", "#e74c3c");
-    
-    nodesGroup.append("text")
-      .attr("x", x)
-      .attr("y", managementNodeY)
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("font-size", "10px")
-      .attr("fill", "white")
-      .text(nodeName);
-    
-    // Create connections for management nodes
-    for (let nic = 0; nic < managementNodeNics; nic++) {
-      let targetSwitch;
-      if (managementNodeConnection === 'spine') {
-        targetSwitch = spineX(numSpine - switchesToConnect + index * managementNodeNics + nic);
-      } else {
-        targetSwitch = leafX(numLeaf - switchesToConnect + index * managementNodeNics + nic);
-      }
-      
-      const startX = x;
-      const startY = managementNodeY - managementNodeHeight / 2;
-      const endX = targetSwitch;
-      const endY = managementNodeConnection === 'spine' ? spineY + 30 : leafY + 30;
-      const midY = (startY + endY) / 2;
-
-      connectionsGroup.append("path")
-        .attr("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
-        .attr("fill", "none")
-        .attr("stroke", "#e74c3c")
-        .attr("stroke-width", 1);
-    }
-  });
-  
-  nodesGroup.append("text")
-    .attr("x", width / 2)
-    .attr("y", 30)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
-    .attr("font-weight", "bold")
-    .text("Spine Switches");
-  
-  nodesGroup.append("text")
-    .attr("x", width / 2)
-    .attr("y", leafY - 20)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
-    .attr("font-weight", "bold")
-    .text("Leaf Switches");
-  
-  nodesGroup.append("text")
-    .attr("x", width / 2)
-    .attr("y", serverY - 20)
-    .attr("text-anchor", "middle")
-    .attr("font-size", "14px")
-    .attr("font-weight", "bold")
-    .text("Servers");
-  
-  const suWidth = width / numSU;
-  for (let su = 0; su < numSU; su++) {
-    connectionsGroup.append("rect")
-      .attr("x", suWidth * su)
-      .attr("y", 10)
-      .attr("width", suWidth)
-      .attr("height", managementNodeY + managementNodeHeight / 2 + 30)
-      .attr("fill", "none")
-      .attr("stroke", "#95a5a6")
-      .attr("stroke-width", 2)
-      .attr("stroke-dasharray", "5,5");
-    
-    nodesGroup.append("text")
-      .attr("x", suWidth * (su + 0.5))
-      .attr("y", managementNodeY + managementNodeHeight / 2 + 25)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "14px")
-      .attr("font-weight", "bold")
-      .text(`SU${su + 1}`);
-  }
-
-  // Add logo
-  if (showLogo) {
-    const logoWidth = 100 * logoScale;
-    const logoHeight = 50 * logoScale;
-    const logoX = (width - logoWidth) / 2;
-    const logoY = spineY + (logoCenterDistance / 100) * (leafY - spineY) - logoHeight / 2;
-
-    svg.append("image")
-      .attr("xlink:href", "logo.png")
-      .attr("x", logoX)
-      .attr("y", logoY)
-      .attr("width", logoWidth)
-      .attr("height", logoHeight);
-  }
-}
-
-function downloadPNG(withBackground) {
-  const svg = document.querySelector('#diagram svg');
-  const svgData = new XMLSerializer().serializeToString(svg);
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  const img = new Image();
-  const dpi = parseInt(document.getElementById('imageDPI').value);
-  const scale = dpi / 96;
-  
-  img.onload = function() {
-    canvas.width = img.width * scale;
-    canvas.height = img.height * scale;
-    
-    if (withBackground) {
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    
-    ctx.scale(scale, scale);
-    ctx.drawImage(img, 0, 0);
-    canvas.toBlob(function(blob) {
-      saveAs(blob, withBackground ? 'topology_white_bg.png' : 'topology_transparent.png');
-    });
-  };
-  
-  img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-}
-
-updateNetworkCardOptions();
-calculateAndDraw();
-
-window.addEventListener('resize', calculateAndDraw);
-</script>
+              // 页面加载完成后开始动画
+              showModules();
+            });
+    </script>
 </body>
 </html>
