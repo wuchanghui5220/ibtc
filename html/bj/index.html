@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel报价单生成器</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-bg: #d4edda;
+            --success-border: #c3e6cb;
+            --success-text: #155724;
+            --warning-bg: #fff3cd;
+            --warning-border: #ffeeba;
+            --warning-text: #856404;
+            --danger-bg: #f8d7da;
+            --danger-border: #f5c6cb;
+            --danger-text: #721c24;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.accent {
+            background-color: var(--accent-color);
+        }
+
+        button.accent:hover {
+            background-color: #c0392b;
+        }
+
+        .results-container {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        .selected-items {
+            margin-top: 20px;
+        }
+
+        .quantity-input {
+            width: 80px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            color: var(--success-text);
+            background-color: var(--success-bg);
+            border-color: var(--success-border);
+        }
+
+        .alert-warning {
+            color: var(--warning-text);
+            background-color: var(--warning-bg);
+            border-color: var(--warning-border);
+        }
+
+        .alert-danger {
+            color: var(--danger-text);
+            background-color: var(--danger-bg);
+            border-color: var(--danger-border);
+        }
+
+        .note {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Excel报价单生成器</h1>
+
+        <div class="section">
+            <h2>1. 产品数据</h2>
+            <div id="dataStatus" class="alert alert-warning">
+                正在加载产品数据...
+            </div>
+        </div>
+
+        <div class="section" id="searchSection" style="display: none;">
+            <h2>2. 查询产品</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="请输入搜索词...">
+                <button id="searchButton">搜索</button>
+            </div>
+
+            <div id="searchResults" class="results-container" style="display: none;">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="20%">商品名称</th>
+                            <th width="20%">规格型号</th>
+                            <th width="35%">产品描述</th>
+                            <th width="10%">价格</th>
+                            <th width="10%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+
+            <div id="noResults" class="alert alert-warning" style="display: none;">
+                未找到匹配的产品，请尝试其他搜索词。
+            </div>
+
+            <div id="searchLoader" class="loader" style="display: none;"></div>
+        </div>
+
+        <div class="section" id="selectedItemsSection" style="display: none;">
+            <h2>3. 已选择的产品</h2>
+            <div class="selected-items">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="20%">商品名称</th>
+                            <th width="20%">规格型号</th>
+                            <th width="30%">产品描述</th>
+                            <th width="10%">价格($)</th>
+                            <th width="10%">数量</th>
+                            <th width="5%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedItemsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section" id="quoteSection" style="display: none;">
+            <h2>4. 生成报价单</h2>
+            <div>
+                <p>设置参数：</p>
+                <div style="margin: 15px 0;">
+                    <label for="exchangeRate">人民币对美元汇率：</label>
+                    <input type="number" id="exchangeRate" value="7.35" step="0.01" min="0">
+                </div>
+                <div style="margin: 15px 0;">
+                    <label for="deliveryPeriod">货期（周）：</label>
+                    <input type="text" id="deliveryPeriod" value="2-3">
+                </div>
+                <div class="note">
+                    <p>注意：报价单包含13%税费</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="generateQuoteButton" class="accent">生成报价单</button>
+            </div>
+
+            <div id="generateLoader" class="loader" style="display: none;"></div>
+            <div id="generateSuccess" class="alert alert-success" style="display: none;">
+                报价单生成成功！
+            </div>
+            <div id="generateError" class="alert alert-danger" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let productData = [];
+        let selectedItems = [];
+        const jsonDataPath = 'products-latest.json';
+
+        // DOM元素
+        const dataStatus = document.getElementById('dataStatus');
+        const searchSection = document.getElementById('searchSection');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const resultsBody = document.getElementById('resultsBody');
+        const noResults = document.getElementById('noResults');
+        const searchLoader = document.getElementById('searchLoader');
+        const selectedItemsSection = document.getElementById('selectedItemsSection');
+        const selectedItemsBody = document.getElementById('selectedItemsBody');
+        const quoteSection = document.getElementById('quoteSection');
+        const generateQuoteButton = document.getElementById('generateQuoteButton');
+        const exchangeRateInput = document.getElementById('exchangeRate');
+        const deliveryPeriodInput = document.getElementById('deliveryPeriod');
+        const generateLoader = document.getElementById('generateLoader');
+        const generateSuccess = document.getElementById('generateSuccess');
+        const generateError = document.getElementById('generateError');
+
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', loadProductData);
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        generateQuoteButton.addEventListener('click', generateQuote);
+
+        // 加载产品数据
+        function loadProductData() {
+            dataStatus.textContent = "正在加载产品数据...";
+            dataStatus.className = "alert alert-warning";
+
+            fetch(jsonDataPath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`无法加载产品数据 (${response.status})`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 关键修改：从data.products中获取产品数据
+                    if (data.products && Array.isArray(data.products)) {
+                        productData = data.products;
+                        dataStatus.textContent = `成功加载 ${productData.length} 个产品数据`;
+                        dataStatus.className = "alert alert-success";
+                        searchSection.style.display = 'block';
+                    } else {
+                        throw new Error('JSON数据结构不正确，缺少products数组');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading product data:', error);
+                    dataStatus.textContent = `加载产品数据失败: ${error.message}`;
+                    dataStatus.className = "alert alert-danger";
+                });
+        }
+
+        // 执行搜索
+        function performSearch() {
+            if (productData.length === 0) {
+                alert('产品数据尚未加载完成');
+                return;
+            }
+
+            const searchTerm = searchInput.value.trim().toUpperCase();
+            if (!searchTerm) {
+                alert('请输入搜索词');
+                return;
+            }
+
+            searchLoader.style.display = 'block';
+            searchResults.style.display = 'none';
+            noResults.style.display = 'none';
+
+            // 执行搜索
+            setTimeout(() => {
+                // 在多个字段中搜索
+                const results = productData.filter(item =>
+                    (item.product_name && item.product_name.toString().toUpperCase().includes(searchTerm)) ||
+                    (item.price_book_organizer && item.price_book_organizer.toString().toUpperCase().includes(searchTerm)) ||
+                    (item.product_description && item.product_description.toString().toUpperCase().includes(searchTerm))
+                );
+
+                if (results.length === 0) {
+                    noResults.style.display = 'block';
+                } else {
+                    displaySearchResults(results);
+                    searchResults.style.display = 'block';
+                }
+                searchLoader.style.display = 'none';
+            }, 300);
+        }
+
+        // 显示搜索结果
+        function displaySearchResults(results) {
+            resultsBody.innerHTML = '';
+
+            results.forEach((item, index) => {
+                const row = document.createElement('tr');
+
+                // 索引
+                const indexCell = document.createElement('td');
+                indexCell.textContent = index + 1;
+                row.appendChild(indexCell);
+
+                // 商品名称 (price_book_organizer)
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.price_book_organizer || '';
+                row.appendChild(nameCell);
+
+                // 规格型号 (product_name)
+                const modelCell = document.createElement('td');
+                modelCell.textContent = item.product_name || '';
+                row.appendChild(modelCell);
+
+                // 产品描述
+                const descCell = document.createElement('td');
+                descCell.textContent = item.product_description || '';
+                row.appendChild(descCell);
+
+                // 价格
+                const priceCell = document.createElement('td');
+                priceCell.textContent = item.price
+                    ? `$${item.price.toLocaleString()}`
+                    : '';
+                row.appendChild(priceCell);
+
+                // 操作按钮
+                const actionCell = document.createElement('td');
+                const addButton = document.createElement('button');
+                addButton.textContent = '选择';
+                addButton.addEventListener('click', () => {
+                    promptQuantityAndAddItem(item);
+                });
+                actionCell.appendChild(addButton);
+                row.appendChild(actionCell);
+
+                resultsBody.appendChild(row);
+            });
+        }
+
+        // 提示输入数量并添加项目
+        function promptQuantityAndAddItem(item) {
+            const quantity = prompt(`请输入 ${item.product_name} 的购买数量:`, '1');
+            if (quantity === null) return; // 用户取消
+
+            const qty = parseInt(quantity);
+            if (isNaN(qty) || qty <= 0) {
+                alert('请输入有效的数量');
+                return;
+            }
+
+            // 添加到已选择项目
+            const selectedItem = {
+                ...item,
+                Quantity: qty
+            };
+
+            // 检查是否已经选择过相同产品
+            const existingIndex = selectedItems.findIndex(i => i.product_name === item.product_name);
+            if (existingIndex >= 0) {
+                // 已存在，更新数量
+                selectedItems[existingIndex].Quantity += qty;
+            } else {
+                // 新添加
+                selectedItems.push(selectedItem);
+            }
+
+            updateSelectedItemsDisplay();
+            selectedItemsSection.style.display = 'block';
+            quoteSection.style.display = 'block';
+        }
+
+        // 更新已选择项目的显示
+        function updateSelectedItemsDisplay() {
+            selectedItemsBody.innerHTML = '';
+
+            selectedItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+
+                // 索引
+                const indexCell = document.createElement('td');
+                indexCell.textContent = index + 1;
+                row.appendChild(indexCell);
+
+                // 商品名称
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.price_book_organizer || '';
+                row.appendChild(nameCell);
+
+                // 规格型号
+                const modelCell = document.createElement('td');
+                modelCell.textContent = item.product_name || '';
+                row.appendChild(modelCell);
+
+                // 产品描述
+                const descCell = document.createElement('td');
+                descCell.textContent = item.product_description || '';
+                row.appendChild(descCell);
+
+                // 价格
+                const priceCell = document.createElement('td');
+                priceCell.textContent = item.price
+                    ? `$${item.price.toLocaleString()}`
+                    : '';
+                row.appendChild(priceCell);
+
+                // 数量
+                const qtyCell = document.createElement('td');
+                const qtyInput = document.createElement('input');
+                qtyInput.type = 'number';
+                qtyInput.className = 'quantity-input';
+                qtyInput.min = 1;
+                qtyInput.value = item.Quantity;
+                qtyInput.addEventListener('change', function() {
+                    const newQty = parseInt(this.value);
+                    if (!isNaN(newQty) && newQty > 0) {
+                        item.Quantity = newQty;
+                    } else {
+                        this.value = item.Quantity;
+                    }
+                });
+                qtyCell.appendChild(qtyInput);
+                row.appendChild(qtyCell);
+
+                // 删除按钮
+                const actionCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = '删除';
+                deleteButton.className = 'accent';
+                deleteButton.addEventListener('click', () => {
+                    selectedItems.splice(index, 1);
+                    updateSelectedItemsDisplay();
+
+                    if (selectedItems.length === 0) {
+                        selectedItemsSection.style.display = 'none';
+                        quoteSection.style.display = 'none';
+                    }
+                });
+                actionCell.appendChild(deleteButton);
+                row.appendChild(actionCell);
+
+                selectedItemsBody.appendChild(row);
+            });
+        }
+
+        // 生成报价单
+        function generateQuote() {
+            if (selectedItems.length === 0) {
+                alert('请先选择产品');
+                return;
+            }
+
+            generateLoader.style.display = 'block';
+            generateSuccess.style.display = 'none';
+            generateError.style.display = 'none';
+
+            // 创建一个新的工作簿
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet([]);
+
+            // 设置列宽
+            worksheet['!cols'] = [
+                { wch: 10 },  // A列 - 序号
+                { wch: 25 },  // B列 - 商品名称
+                { wch: 30 },  // C列 - 规格型号
+                { wch: 40 },  // D列 - 产品描述
+                { wch: 15 },  // E列 - 品牌
+                { wch: 10 },  // F列 - 数量
+                { wch: 15 },  // G列 - 含税单价
+                { wch: 15 },  // H列 - 含税总价
+                { wch: 10 }   // I列 - 货期
+            ];
+
+            // 获取参数
+            const exchangeRate = parseFloat(exchangeRateInput.value) || 7.35;
+            const deliveryPeriod = deliveryPeriodInput.value || '2-3';
+            const taxRate = 0.13;  // 13%增值税
+
+            // 添加报价日期 - 放在第10行右侧
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            XLSX.utils.sheet_add_aoa(worksheet, [["报价日期：" + dateStr]], { origin: "J10" });
+
+            // 添加标题行 - 放在第1行
+            XLSX.utils.sheet_add_aoa(worksheet, [
+                ["序号", "商品名称", "规格型号", "产品描述", "品牌", "数量", "含税单价", "含税总价", "货期"]
+            ], { origin: "A1" });
+
+            // 设置标题行样式
+            for (let col = 0; col < 9; col++) {
+                const cellRef = XLSX.utils.encode_cell({ r: 0, c: col });
+                if (!worksheet[cellRef]) worksheet[cellRef] = { t: 's', v: '' };
+                worksheet[cellRef].s = {
+                    fill: { fgColor: { rgb: "E6F0F8" } },
+                    font: { bold: true },
+                    border: {
+                        top: { style: "thin" },
+                        bottom: { style: "thin" },
+                        left: { style: "thin" },
+                        right: { style: "thin" }
+                    }
+                };
+            }
+
+            // 写入产品数据 - 从第2行开始
+            selectedItems.forEach((item, index) => {
+                // 计算含税价格
+                const usdPrice = parseFloat(item.price) || 0;
+                const cnyPriceWithTax = usdPrice * exchangeRate * (1 + taxRate);
+                const totalPrice = cnyPriceWithTax * item.Quantity;
+
+                // 添加数据行
+                XLSX.utils.sheet_add_aoa(worksheet, [[
+                    index + 1, // 序号
+                    item.price_book_organizer || "", // 商品名称
+                    item.product_name || "", // 规格型号
+                    item.product_description || "", // 产品描述
+                    "NVIDIA", // 品牌
+                    item.Quantity, // 数量
+                    cnyPriceWithTax, // 含税单价
+                    totalPrice, // 含税总价
+                    deliveryPeriod + "周" // 货期
+                ]], { origin: `A${index + 2}` });
+
+                // 设置单元格格式
+                const row = index + 1;
+
+                // 设置价格列为人民币格式
+                const unitPriceCell = XLSX.utils.encode_cell({ r: row, c: 6 }); // G列 - 含税单价
+                const totalPriceCell = XLSX.utils.encode_cell({ r: row, c: 7 }); // H列 - 含税总价
+
+                if (worksheet[unitPriceCell]) worksheet[unitPriceCell].z = '¥#,##0.00';
+                if (worksheet[totalPriceCell]) worksheet[totalPriceCell].z = '¥#,##0.00';
+
+                // 设置行样式
+                for (let col = 0; col < 9; col++) {
+                    const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+                    if (!worksheet[cellRef]) worksheet[cellRef] = {};
+
+                    // 单元格对齐方式
+                    let alignment = { vertical: "center" };
+
+                    if ([0, 4, 5].includes(col)) { // 序号、品牌、数量居中对齐
+                        alignment.horizontal = "center";
+                    } else if ([6, 7].includes(col)) { // 价格列右对齐
+                        alignment.horizontal = "right";
+                    } else { // 其他列左对齐
+                        alignment.horizontal = "left";
+                    }
+
+                    worksheet[cellRef].s = {
+                        ...worksheet[cellRef].s,
+                        alignment: alignment,
+                        border: {
+                            top: { style: "thin" },
+                            bottom: { style: "thin" },
+                            left: { style: "thin" },
+                            right: { style: "thin" }
+                        }
+                    };
+                }
+            });
+
+            // 添加工作表到工作簿
+            XLSX.utils.book_append_sheet(workbook, worksheet, "报价单");
+
+            // 生成Excel文件
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+            const fileName = `报价单-${timestamp}.xlsx`;
+
+            try {
+                XLSX.writeFile(workbook, fileName);
+                generateSuccess.style.display = 'block';
+                generateSuccess.textContent = `报价单已生成：${fileName}`;
+            } catch (error) {
+                console.error('Error saving file:', error);
+                generateError.textContent = `生成报价单时出错: ${error.message}`;
+                generateError.style.display = 'block';
+            } finally {
+                generateLoader.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
