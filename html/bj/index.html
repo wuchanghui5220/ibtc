@@ -294,7 +294,7 @@
         // 全局变量
         let productData = [];
         let selectedItems = [];
-        const jsonDataPath = 'products-latest.json';
+        const jsonDataPath = 'output/products-latest.json';
 
         // DOM元素
         const dataStatus = document.getElementById('dataStatus');
@@ -355,14 +355,15 @@
                 });
         }
 
-        // 执行搜索
+        // 修改后的执行搜索函数
         function performSearch() {
             if (productData.length === 0) {
                 alert('产品数据尚未加载完成');
                 return;
             }
 
-            const searchTerm = searchInput.value.trim().toUpperCase();
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.trim();
             if (!searchTerm) {
                 alert('请输入搜索词');
                 return;
@@ -374,12 +375,28 @@
 
             // 执行搜索
             setTimeout(() => {
-                // 在多个字段中搜索
-                const results = productData.filter(item =>
-                    (item.product_name && item.product_name.toString().toUpperCase().includes(searchTerm)) ||
-                    (item.price_book_organizer && item.price_book_organizer.toString().toUpperCase().includes(searchTerm)) ||
-                    (item.product_description && item.product_description.toString().toUpperCase().includes(searchTerm))
-                );
+                // 将搜索词拆分为多个关键字（按空格分隔）
+                const keywords = searchTerm.split(/\s+/).filter(kw => kw.length > 0);
+                
+                // 初始化结果为所有产品
+                let results = [...productData];
+                
+                // 对每个关键字进行级联筛选
+                for (const keyword of keywords) {
+                    const upperKeyword = keyword.toUpperCase();
+                    
+                    // 在当前结果集中继续筛选
+                    results = results.filter(item => 
+                        (item.product_name && item.product_name.toString().toUpperCase().includes(upperKeyword)) ||
+                        (item.price_book_organizer && item.price_book_organizer.toString().toUpperCase().includes(upperKeyword)) ||
+                        (item.product_description && item.product_description.toString().toUpperCase().includes(upperKeyword))
+                    );
+                    
+                    // 如果某个关键字筛选后没有结果，则提前退出
+                    if (results.length === 0) {
+                        break;
+                    }
+                }
 
                 if (results.length === 0) {
                     noResults.style.display = 'block';
