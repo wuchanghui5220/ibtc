@@ -1,0 +1,534 @@
+:root {
+    /* 主色调 */
+    --primary-color: #3b82f6;          /* 蓝色 */
+    --secondary-color: #10b981;        /* 绿色 */
+    --accent-color: #f59e0b;           /* 橙色 */
+    --error-color: #ef4444;            /* 红色 */
+    
+    /* 背景和文本 */
+    --bg-color: #f1f5f9;               /* 非常浅的灰色背景 */
+    --card-bg: #ffffff;                /* 白色卡片背景 */
+    --diagram-bg: #0f172a;             /* 深蓝色图表背景 */
+    --text-primary: #1e293b;           /* 主要文本颜色 */
+    --text-secondary: #64748b;         /* 次要文本颜色 */
+    --text-light: #94a3b8;             /* 浅色文本 */
+    
+    /* 边框和阴影 */
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+}
+
+/* 头部样式 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8px 8px 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.tools {
+    display: flex;
+    gap: 8px;
+}
+
+.tools button {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.tools button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tools button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 主内容区域 - 垂直布局 */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+}
+
+/* 可视化区域 */
+.visualization-area {
+    flex: 1;
+    min-height: 65vh;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.visualization-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    height: 40px;
+}
+
+.visualization-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.visualization-header .status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background-color: rgba(59, 130, 246, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--secondary-color);
+}
+
+#diagram-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background-color: var(--diagram-bg);
+}
+
+#diagram {
+    width: 100%;
+    height: 100%;
+}
+
+/* 信息面板 */
+.visualization-info {
+    position: absolute;
+    top: 48px;
+    left: 8px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--secondary-color);
+    max-width: 250px;
+    font-size: 0.8rem;
+    z-index: 10;
+    box-shadow: var(--shadow);
+    transform: translateX(-110%);
+    transition: transform 0.3s ease;
+}
+
+.visualization-info.show {
+    transform: translateX(0);
+}
+
+.info-toggle {
+    position: absolute;
+    top: 48px;
+    left: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 11;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: var(--shadow-sm);
+}
+
+.info-toggle:hover {
+    background-color: #2563eb;
+}
+
+.info-toggle.active {
+    left: 250px;
+    background-color: var(--secondary-color);
+}
+
+.visualization-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.visualization-info p {
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.visualization-info .value {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* 超紧凑型控制区域 - 六个面板布局 */
+.controls-area {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    max-height: 200px; /* 确保控制面板高度固定 */
+}
+
+.controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.controls-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 网格布局 6列，确保控制面板横向排列 */
+.controls-content {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 125px; /* 控制内容区域最大高度 */
+}
+
+.control-group {
+    background-color: #f8fafc;
+    border-radius: 6px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.control-group h3 {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: var(--primary-color);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.control-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+select, input[type="number"] {
+    padding: 4px 6px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    width: 100%;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.range-control {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.range-slider {
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: #e2e8f0;
+    outline: none;
+    transition: all 0.2s;
+    margin: 5px 0;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.range-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.range-control .range-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-light);
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-color);
+}
+
+.action-buttons button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.primary-btn:hover {
+    background-color: #2563eb;
+}
+
+.secondary-btn {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.secondary-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+}
+
+/* D3.js SVG 样式 */
+.spine, .leaf {
+    stroke: white;
+    stroke-width: 1;
+}
+
+.spine {
+    fill: var(--primary-color);
+}
+
+.leaf {
+    fill: var(--secondary-color);
+}
+
+.server {
+    fill: var(--accent-color);
+    stroke: white;
+    stroke-width: 1;
+}
+
+path {
+    transition: stroke 0.2s;
+}
+
+path:hover {
+    stroke: var(--secondary-color);
+    stroke-width: 1;
+}
+
+/* 工具提示 */
+.tooltip {
+    position: absolute;
+    background-color: white;
+    color: var(--text-primary);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transform: translate(-50%, -100%);
+    margin-top: -8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid white;
+}
+
+/* 加载指示器 */
+.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.loader {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--secondary-color);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 响应式设计 */
+@media (min-width: 1200px) {
+    .container {
+        padding: 16px;
+    }
+    
+    .controls-content {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .controls-content {
+        grid-template-columns: repeat(3, 1fr);
+        max-height: 220px;
+    }
+    
+    .controls-area {
+        max-height: 260px;
+    }
+}
+
+@media (max-width: 767px) {
+    .controls-content {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 280px;
+    }
+    
+    .controls-area {
+        max-height: 320px;
+    }
+    
+    .tools {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .controls-content {
+        grid-template-columns: 1fr;
+        max-height: 380px;
+    }
+    
+    .controls-area {
+        max-height: 420px;
+    }
+}
