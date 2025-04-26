@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实时网络拓扑可视化器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>网络拓扑可视化(Only supports level 2)</h1>
+            <div class="tools">
+                <button id="toggleGridBtn">显示网格</button>
+                <button id="exportSvgBtn">导出SVG</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="visualization-area">
+                <div class="visualization-header">
+                    <h2>InfiniBand Fabric 拓扑图</h2>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        <span id="statusText">就绪</span>
+                    </div>
+                </div>
+                
+                <div class="info-toggle" id="infoToggle">i</div>
+                <div class="visualization-info" id="infoPanel">
+                    <h3>拓扑信息</h3>
+                    <p>交换机类型: <span id="info-switchType" class="value">QM9700</span></p>
+                    <p>网卡类型: <span id="info-networkCardType" class="value">400G</span></p>
+                    <p>可扩展单元数量: <span id="info-suCount" class="value">2</span></p>
+                    <p>Spine 交换机数量: <span id="info-spineCount" class="value">8</span></p>
+                    <p>Leaf 交换机数量: <span id="info-leafCount" class="value">16</span></p>
+                    <p>服务器数量: <span id="info-serverCount" class="value">128</span></p>
+                    <p>总端口数: <span id="info-portCount" class="value">1536</span></p>
+                    <p>总线缆数: <span id="info-cableCount" class="value">1152</span></p>
+                </div>
+                
+                <div id="diagram-container">
+                    <div id="diagram"></div>
+                </div>
+                
+                <div id="tooltip" class="tooltip"></div>
+            </div>
+
+            <div class="controls-area">
+                <div class="controls-header">
+                    <h2>参数控制面板</h2>
+                </div>
+                
+                <div class="controls-content">
+                    <div class="control-group">
+                        <h3>基本配置</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <label for="switchType">交换机类型</label>
+                                <select id="switchType">
+                                    <option value="QM8700">QM8700 (40-port)</option>
+                                    <option value="QM9700" selected>QM9700 (64-port)</option>
+                                    <option value="Q3400">Q3400 (144-port)</option>
+                                    <option value="SN5600">SN5600 (128-port)</option>
+                                </select>
+                            </div>
+                            <div class="control-item">
+                                <label for="networkCardType">网卡类型</label>
+                                <select id="networkCardType">
+                                    <option value="200G">200G</option>
+                                    <option value="400G" selected>400G</option>
+                                    <option value="800G">800G</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>服务器配置</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <label for="numServers">服务器数量</label>
+                                <input type="number" id="numServers" min="1" value="128" max="1000">
+                            </div>
+                            <div class="control-item">
+                                <label for="numNetworkCardsPerServer">每服务器网卡数</label>
+                                <select id="numNetworkCardsPerServer">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="8" selected>8</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>图表布局</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <label for="serversPerRow">每行服务器数</label>
+                                <select id="serversPerRow">
+                                    <option value="4">4</option>
+                                    <option value="8" selected>8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div class="control-item">
+                                <label for="diagramHeight">图表高度 (px)</label>
+                                <input type="number" id="diagramHeight" min="450" max="2000" value="550" step="50">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 将距离设置分为三个独立面板 -->
+                    <div class="control-group">
+                        <h3>Spine-Leaf 距离</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <div class="range-control">
+                                    <input type="range" id="spineLeafDistance" class="range-slider" min="100" max="200" value="150" step="10">
+                                    <div class="range-info">
+                                        <span>100px</span>
+                                        <span id="spineLeafValue">150px</span>
+                                        <span>200px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>Leaf-Node 距离</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <div class="range-control">
+                                    <input type="range" id="leafNodeDistance" class="range-slider" min="100" max="200" value="120" step="10">
+                                    <div class="range-info">
+                                        <span>100px</span>
+                                        <span id="leafNodeValue">120px</span>
+                                        <span>200px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>节点行间距</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <div class="range-control">
+                                    <input type="range" id="nodeRowSpacing" class="range-slider" min="20" max="100" value="60" step="10">
+                                    <div class="range-info">
+                                        <span>20px</span>
+                                        <span id="nodeRowValue">60px</span>
+                                        <span>100px</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="resetButton" class="secondary-btn">重置参数</button>
+                    <button id="calculateButton" class="primary-btn">计算拓扑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="d3.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
